@@ -25,7 +25,7 @@ const DetailModal = ({ berkas, onClose }) => {
 
   const renderTimeline = () => (
     <Timeline>
-      {berkas.status?.statusDetail.map((status, index) => (
+      {berkas.status?.map((status, index) => (
         <TimelineItem key={index}>
           {index > 0 && <TimelineConnector />}
           <TimelineHeader className="h-3">
@@ -35,7 +35,7 @@ const DetailModal = ({ berkas, onClose }) => {
             </Typography>
           </TimelineHeader>
           <TimelineBody className="pb-4">
-            {status.subStatus.map((sub, subIndex) => (
+            {status?.statusDetail?.map((sub, subIndex) => (
               <div key={subIndex} className="pl-4">
                 <Typography
                   variant="small"

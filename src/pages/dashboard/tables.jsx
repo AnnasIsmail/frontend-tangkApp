@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import axios from "../../api/apiTangkApp"; // Import Axios instance
 import PopUpInsertBerkas from "@/components/InsertPopup";
 import DetailModal from "@/components/detailPopUp"; // Import the detail modal
+import PopUpUpdateBerkas from "@/components/PopUpUpdateBerkas";
 
 export function Tables() {
   const [controller] = useMaterialTailwindController();
@@ -22,6 +23,7 @@ export function Tables() {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
   const [showPopup, setShowPopup] = useState(false);
+  const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const [selectedBerkas, setSelectedBerkas] = useState(null); // State for selected berkas for detail modal
 
   const processBerkasData = (data) => {
@@ -82,9 +84,26 @@ export function Tables() {
           {/* <IconButton variant="text" color="blue" onClick={() => setSelectedBerkas(berkas)}>
             <EyeIcon className="h-5 w-5" />
           </IconButton> */}
-          <IconButton variant="text" color="blue">
-            <PencilIcon className="h-5 w-5" />
-          </IconButton>
+<IconButton
+    variant="text"
+    color="blue"
+    onClick={() => setShowUpdatePopup(true)}
+>
+    <PencilIcon className="h-5 w-5" />
+</IconButton>
+{showUpdatePopup && (
+    <PopUpUpdateBerkas
+        data={berkas} // Data berkas yang dipilih
+        onClose={() => setShowUpdatePopup(false)}
+        onUpdateSuccess={(updatedData) => {
+            const updatedList = berkasData.map((item) =>
+                item.idBerkas === updatedData.idBerkas ? updatedData : item
+            );
+            setBerkasData(updatedList);
+            setShowUpdatePopup(false);
+        }}
+    />
+)}
           <IconButton variant="text" color="red">
             <TrashIcon className="h-5 w-5" />
           </IconButton>
