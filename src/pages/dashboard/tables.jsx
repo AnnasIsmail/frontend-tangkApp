@@ -3,217 +3,263 @@ import {
   CardHeader,
   CardBody,
   Typography,
-  Avatar,
   Chip,
-  Tooltip,
-  Progress,
+  IconButton,
+  Button,
 } from "@material-tailwind/react";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { authorsTableData, projectsTableData } from "@/data";
+import { PencilIcon, TrashIcon, PlusIcon, EyeIcon } from "@heroicons/react/24/outline"; // Import icons
+import { useMaterialTailwindController } from "@/context";
+import { useEffect, useState } from "react";
+import axios from "../../api/apiTangkApp"; // Import Axios instance
+import PopUpInsertBerkas from "@/components/InsertPopup";
+import DetailModal from "@/components/detailPopUp"; // Import the detail modal
 
 export function Tables() {
+  const [controller] = useMaterialTailwindController();
+  const { roleNow, token } = controller;
+
+  const [berkasData, setBerkasData] = useState([]); // State untuk data berkas
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedBerkas, setSelectedBerkas] = useState(null); // State for selected berkas for detail modal
+
+  const processBerkasData = (data) => {
+    return data.map((berkas) => {
+      const lastStatus =
+        berkas.status?.statusDetail &&
+        berkas.status.statusDetail[berkas.status.statusDetail.length - 1];
+
+      const lastSubStatus =
+        lastStatus?.subStatus &&
+        lastStatus.subStatus[lastStatus.subStatus.length - 1];
+
+      return {
+        ...berkas,
+        lastStatusName: lastStatus?.nama || "N/A",
+        lastSubStatusName: lastSubStatus?.nama || "N/A",
+      };
+    });
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await axios.post(
+          "berkas",
+          { role: roleNow },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Role: roleNow,
+            },
+          }
+        );
+
+        if (response.status === 200 && Array.isArray(response.data)) {
+          const processedData = processBerkasData(response.data);
+          setBerkasData(processedData);
+        } else {
+          throw new Error("Data tidak valid atau kosong.");
+        }
+      } catch (err) {
+        setError(err.message || "Terjadi kesalahan saat mengambil data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [roleNow, token]);
+
+  const renderActionButtons = (berkas) => {
+    if (roleNow === "Admin") {
+      return (
+        <>
+          <IconButton variant="text" color="blue" onClick={() => setSelectedBerkas(berkas)}>
+            <EyeIcon className="h-5 w-5" />
+          </IconButton>
+          <IconButton variant="text" color="blue">
+            <PencilIcon className="h-5 w-5" />
+          </IconButton>
+          <IconButton variant="text" color="red">
+            <TrashIcon className="h-5 w-5" />
+          </IconButton>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Button
+            variant="gradient"
+            color="green"
+            size="sm"
+            onClick={() => console.log("Proses selesai:", berkas.idBerkas)}
+          >
+            Selesai
+          </Button>
+          <Button
+            variant="gradient"
+            color="red"
+            size="sm"
+            onClick={() => console.log("Proses terhenti:", berkas.idBerkas)}
+          >
+            Terhenti
+          </Button>
+        </>
+      );
+    }
+  };
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
-        <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
+        <CardHeader
+          variant="gradient"
+          color="gray"
+          className="mb-8 p-6 flex justify-between items-center"
+        >
           <Typography variant="h6" color="white">
-            Authors Table
+            Berkas Table
           </Typography>
+          {roleNow === "Admin" && (
+            <Button
+              variant="gradient"
+              color="blue"
+              className="flex items-center gap-2"
+              onClick={() => setShowPopup(true)}
+            >
+              <PlusIcon className="h-5 w-5" /> Tambah
+            </Button>
+          )}
         </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
-            <thead>
-              <tr>
-                {["author", "function", "status", "employed", ""].map((el) => (
-                  <th
-                    key={el}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                  >
-                    <Typography
-                      variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400"
-                    >
-                      {el}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {authorsTableData.map(
-                ({ img, name, email, job, online, date }, key) => {
-                  const className = `py-3 px-5 ${
-                    key === authorsTableData.length - 1
-                      ? ""
-                      : "border-b border-blue-gray-50"
-                  }`;
-
-                  return (
-                    <tr key={name}>
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          <Avatar src={img} alt={name} size="sm" variant="rounded" />
-                          <div>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-semibold"
-                            >
-                              {name}
-                            </Typography>
-                            <Typography className="text-xs font-normal text-blue-gray-500">
-                              {email}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {job[0]}
-                        </Typography>
-                        <Typography className="text-xs font-normal text-blue-gray-500">
-                          {job[1]}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={online ? "green" : "blue-gray"}
-                          value={online ? "online" : "offline"}
-                          className="py-0.5 px-2 text-[11px] font-medium w-fit"
-                        />
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {date}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          Edit
-                        </Typography>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody>
-          </table>
-        </CardBody>
-      </Card>
-      <Card>
-        <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
-          <Typography variant="h6" color="white">
-            Projects Table
-          </Typography>
-        </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
-            <thead>
-              <tr>
-                {["companies", "members", "budget", "completion", ""].map(
-                  (el) => (
-                    <th
-                      key={el}
-                      className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                    >
-                      <Typography
-                        variant="small"
-                        className="text-[11px] font-bold uppercase text-blue-gray-400"
+        <CardBody className="px-0 pt-0 pb-2">
+          {loading ? (
+            <Typography className="text-center">Loading...</Typography>
+          ) : error ? (
+            <Typography className="text-center text-red-500">{error}</Typography>
+          ) : berkasData.length === 0 ? (
+            <Typography className="text-center text-blue-gray-500">
+              Tidak ada data yang tersedia.
+            </Typography>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1200px] table-auto">
+                <thead>
+                  <tr>
+                    {[
+                      "ID Berkas",
+                      "No Berkas",
+                      "Tahun Berkas",
+                      "Tanggal Terima",
+                      "Status",
+                      "SubStatus",
+                      "Action",
+                      "Detail",
+                    ].map((el) => (
+                      <th
+                        key={el}
+                        className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
+                          el === "Action" || el === "Detail"
+                            ? "sticky right-0 bg-gray-50 z-10"
+                            : ""
+                        }`}
                       >
-                        {el}
-                      </Typography>
-                    </th>
-                  )
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {projectsTableData.map(
-                ({ img, name, members, budget, completion }, key) => {
-                  const className = `py-3 px-5 ${
-                    key === projectsTableData.length - 1
-                      ? ""
-                      : "border-b border-blue-gray-50"
-                  }`;
-
-                  return (
-                    <tr key={name}>
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          <Avatar src={img} alt={name} size="sm" />
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-bold"
-                          >
-                            {name}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={className}>
-                        {members.map(({ img, name }, key) => (
-                          <Tooltip key={name} content={name}>
-                            <Avatar
-                              src={img}
-                              alt={name}
-                              size="xs"
-                              variant="circular"
-                              className={`cursor-pointer border-2 border-white ${
-                                key === 0 ? "" : "-ml-2.5"
-                              }`}
-                            />
-                          </Tooltip>
-                        ))}
-                      </td>
-                      <td className={className}>
                         <Typography
                           variant="small"
-                          className="text-xs font-medium text-blue-gray-600"
+                          className="text-[11px] font-bold uppercase text-blue-gray-400"
                         >
-                          {budget}
+                          {el}
                         </Typography>
-                      </td>
-                      <td className={className}>
-                        <div className="w-10/12">
-                          <Typography
-                            variant="small"
-                            className="mb-1 block text-xs font-medium text-blue-gray-600"
-                          >
-                            {completion}%
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {berkasData.map((berkas, key) => {
+                    const className = `py-3 px-5 ${
+                      key === berkasData.length - 1
+                        ? ""
+                        : "border-b border-blue-gray-50"
+                    }`;
+
+                    return (
+                      <tr key={berkas._id}>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.idBerkas}
                           </Typography>
-                          <Progress
-                            value={completion}
-                            variant="gradient"
-                            color={completion === 100 ? "green" : "gray"}
-                            className="h-1"
-                          />
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.noBerkas}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.tahunBerkas}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {new Date(berkas.tanggalTerima).toLocaleDateString()}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.lastStatusName}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.lastSubStatusName}
+                          </Typography>
+                        </td>
+                        <td
+                          className={`${className} sticky right-0 bg-gray-50 z-10`}
                         >
-                          <EllipsisVerticalIcon
-                            strokeWidth={2}
-                            className="h-5 w-5 text-inherit"
-                          />
-                        </Typography>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody>
-          </table>
+                          <div className="flex items-center gap-2">
+                            {renderActionButtons(berkas)}
+                          </div>
+                        </td>
+                        <td
+                          className={`${className} sticky right-0 bg-gray-50 z-10`}
+                        >
+                          <IconButton
+                            variant="text"
+                            color="blue"
+                            onClick={() => setSelectedBerkas(berkas)}
+                          >
+                            <EyeIcon className="h-5 w-5" />
+                          </IconButton>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardBody>
       </Card>
+      {showPopup && (
+        <PopUpInsertBerkas
+          onClose={() => setShowPopup(false)}
+          onInsertSuccess={(newBerkas) => {
+            setBerkasData((prevData) => [...prevData, newBerkas]);
+            setShowPopup(false);
+          }}
+        />
+      )}
+      {selectedBerkas && (
+        <DetailModal
+          berkas={selectedBerkas}
+          onClose={() => setSelectedBerkas(null)}
+        />
+      )}
     </div>
   );
 }

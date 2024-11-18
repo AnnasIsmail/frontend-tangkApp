@@ -24,16 +24,16 @@ export const routes = [
         element: <Home />,
       },
       {
+        icon: <TableCellsIcon {...icon} />,
+        name: "Berkas",
+        path: "/berkas",
+        element: <Tables />,
+      },
+      {
         icon: <UserCircleIcon {...icon} />,
         name: "profile",
         path: "/profile",
         element: <Profile />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        element: <Tables />,
       },
       {
         icon: <InformationCircleIcon {...icon} />,

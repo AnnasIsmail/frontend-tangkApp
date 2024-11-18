@@ -51,7 +51,8 @@ export function DashboardNavbar() {
   
       Cookies.remove("authToken"); // Hapus token dari cookie
       setLoginStatus(dispatch, false); // Reset status login
-      setUserData(dispatch, null); // Reset data user
+      setUserData(dispatch, null); 
+      setRoleNow(dispatch, null);
       navigate("/auth/sign-in"); // Redirect ke halaman login
     } catch (error) {
       console.error("Gagal logout:", error);

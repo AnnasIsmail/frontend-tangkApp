@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { useMaterialTailwindController, setLoginStatus, setUserData } from "@/context";
+import { useMaterialTailwindController, setLoginStatus, setUserData, setRoleNow, setToken } from "@/context";
 import axios from "@/api/apiTangkApp";
 import Cookies from "js-cookie";
 
@@ -21,6 +21,8 @@ const ProtectedRoute = ({ children }) => {
           // Jika token valid, set context login dan data user
           setLoginStatus(dispatch, true);
           setUserData(dispatch, response.data.user);
+          setRoleNow(dispatch, response.data.user.role[0]);
+          setToken(dispatch, Cookies.get("authToken"));
         } catch (error) {
           console.error("Token tidak valid atau kadaluarsa:", error);
           Cookies.remove("authToken"); // Hapus token jika tidak valid

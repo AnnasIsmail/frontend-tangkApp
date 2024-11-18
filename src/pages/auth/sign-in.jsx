@@ -3,7 +3,7 @@ import { Input, Button, Typography } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/apiTangkApp"; // Import instance Axios
 import Cookies from "js-cookie"; // Untuk menyimpan token
-import { useMaterialTailwindController, setLoginStatus, setUserData } from "../../context";
+import { useMaterialTailwindController, setLoginStatus, setUserData, setRoleNow, setToken } from "../../context";
 
 export function SignIn() {
   const [NIK, setNIK] = useState("");
@@ -35,7 +35,9 @@ export function SignIn() {
       // Set login status dan user data di context
       setLoginStatus(dispatch, true);
       setUserData(dispatch, user);
-
+      setRoleNow(dispatch, user.role[0]);
+      setToken(dispatch, user.token)
+      
       // Redirect ke halaman dashboard
       navigate("/dashboard/home");
     } catch (err) {

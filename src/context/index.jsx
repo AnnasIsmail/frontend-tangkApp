@@ -30,6 +30,12 @@ export function reducer(state, action) {
     case "SET_USER_DATA": {
       return { ...state, user: action.value };
     }
+    case "SET_ROLE_NOW": {
+      return { ...state, roleNow: action.value };
+    }
+    case "SET_TOKEN": {
+      return { ...state, token: action.value };
+    }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
@@ -44,8 +50,10 @@ export function MaterialTailwindControllerProvider({ children }) {
     transparentNavbar: true,
     fixedNavbar: false,
     openConfigurator: false,
-    isLoggedIn: false, // Menentukan apakah pengguna sudah login
-    user: null, // Menyimpan data user
+    isLoggedIn: false, 
+    user: null, 
+    roleNow: null,
+    token: null, // Tambahkan token di initialState
   };
 
   const [controller, dispatch] = React.useReducer(reducer, initialState);
@@ -96,3 +104,7 @@ export const setLoginStatus = (dispatch, value) =>
   dispatch({ type: "SET_LOGIN_STATUS", value }); // Mengubah status login
 export const setUserData = (dispatch, value) =>
   dispatch({ type: "SET_USER_DATA", value }); // Mengisi data user
+export const setRoleNow = (dispatch, value) =>
+  dispatch({ type: "SET_ROLE_NOW", value }); // Mengubah role saat ini
+export const setToken = (dispatch, value) =>
+  dispatch({ type: "SET_TOKEN", value }); // Menyimpan token
