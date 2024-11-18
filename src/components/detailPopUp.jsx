@@ -70,16 +70,29 @@ const DetailModal = ({ berkas, onClose }) => {
           {renderField("No Berkas", berkas.noBerkas)}
           {renderField("Tahun Berkas", berkas.tahunBerkas)}
           {renderField("Tanggal Terima", new Date(berkas.tanggalTerima).toLocaleDateString())}
-          {renderField("ID Kegiatan", berkas.idKegiatan)}
-          {renderField("ID Pemohon", berkas.idPemohon)}
-          {renderField("ID Jenis Hak", berkas.idJenisHak)}
+          {renderField("Nama Pemohon", berkas.namaPemohon)}
+          {berkas.PIC.map((x, y) => (
+              <div key={y}>
+                  {renderField(`Nama PIC Pemohon ${y + 1}`, x.namaPIC)}
+                  {renderField(`Kontak PIC Pemohon ${y + 1}`, x.kontakPIC)}
+              </div>
+          ))}
+          {renderField("Jenis Hak", berkas.JenisHak)}
+          {renderField("Nomor Hak", berkas.noHak)}
+          {renderField("Desa dan Kecamatan", berkas.namaDesa + berkas.namaKecamatan)}
+          {renderField("Tanggal Entri", new Date(berkas.dateIn).toLocaleDateString())}
+          {renderField("Status Perjalanan", berkas.status[berkas.status.length - 1].name)}
+          {renderField("Substatus", berkas.status[berkas.status.length - 1]?.statusDetail[berkas.status[berkas.status.length - 1]?.statusDetail.length - 1]?.nama)}
+          {berkas.deskripsiKendala && renderField("Deskripsi Kendala", berkas.deskripsiKendala)}
+          {renderField("Nama Petugas Ukur", berkas.namaPetugasUkur)}
+          {renderField("Status Alih Media", berkas.statusAlihMedia ? "Sudah" : "Belum")}
+          {renderField("Status Bayar PNBP", berkas.statusBayarPNBP ? "Sudah" : "Belum")}
+
+          {/* {renderField("Kegiatan", berkas.namaKegiatan)}
           {renderField("No Hak", berkas.noHak)}
-          {renderField("ID Desa", berkas.idDesa)}
           {renderField("ID SPS", berkas.idSPS)}
           {renderField("ID Petugas Ukur", berkas.idPetugasUkur)}
-          {renderField("Status Alih Media", berkas.statusAlihMedia ? "Ya" : "Tidak")}
-          {renderField("Status Bayar PNBP", berkas.statusBayarPNBP ? "Ya" : "Tidak")}
-          {renderField("ID User", berkas.idUser)}
+          {renderField("ID User", berkas.idUser)} */}
           <Typography variant="small" className="text-gray-600 font-bold mt-4">
             Status:
           </Typography>

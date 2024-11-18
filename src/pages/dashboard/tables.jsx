@@ -26,6 +26,8 @@ export function Tables() {
   const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const [selectedBerkas, setSelectedBerkas] = useState(null); // State for selected berkas for detail modal
 
+  const [refresh, setRefresh] = useState(false);
+
   const processBerkasData = (data) => {
     return data.map((berkas) => {
       const lastStatus =
@@ -75,7 +77,7 @@ export function Tables() {
     };
 
     fetchData();
-  }, [roleNow, token]);
+  }, [roleNow, token, refresh]);
 
   const renderActionButtons = (berkas) => {
     if (roleNow === "Admin") {
@@ -96,11 +98,7 @@ export function Tables() {
         data={berkas} // Data berkas yang dipilih
         onClose={() => setShowUpdatePopup(false)}
         onUpdateSuccess={(updatedData) => {
-            const updatedList = berkasData.map((item) =>
-                item.idBerkas === updatedData.idBerkas ? updatedData : item
-            );
-            setBerkasData(updatedList);
-            setShowUpdatePopup(false);
+            setRefresh(!refresh);
         }}
     />
 )}
@@ -170,10 +168,11 @@ export function Tables() {
                 <thead>
                   <tr>
                     {[
-                      "ID Berkas",
                       "No Berkas",
-                      "Tahun Berkas",
                       "Tanggal Terima",
+                      "Kegiatan",
+                      "Pemohon",
+                      "Desa",
                       "Status",
                       "SubStatus",
                       "Action",
@@ -209,17 +208,7 @@ export function Tables() {
                       <tr key={berkas._id}>
                         <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.idBerkas}
-                          </Typography>
-                        </td>
-                        <td className={className}>
-                          <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.noBerkas}
-                          </Typography>
-                        </td>
-                        <td className={className}>
-                          <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.tahunBerkas}
+                          {berkas.noBerkas}/{berkas.tahunBerkas}
                           </Typography>
                         </td>
                         <td className={className}>
@@ -229,13 +218,28 @@ export function Tables() {
                         </td>
                         <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.lastStatusName}
+                            {berkas.namaKegiatan}
                           </Typography>
                         </td>
                         <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.lastSubStatusName}
+                            {berkas.namaPemohon}
                           </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.namaDesa}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.status[berkas.status.length - 1].name}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {berkas.status[berkas.status.length - 1]?.statusDetail[berkas.status[berkas.status.length - 1]?.statusDetail.length - 1]?.nama}
+                            </Typography>
                         </td>
                         <td
                           className={`${className} sticky right-0 bg-gray-50 z-10`}

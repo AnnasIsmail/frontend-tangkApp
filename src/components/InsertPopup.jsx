@@ -140,6 +140,11 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
             tanggalSPS,
         } = formData;
 
+        console.log(
+
+            namaSubsek 
+        )
+
         // Validasi semua kolom wajib kecuali PIC
         if (
             !idBerkas ||
@@ -249,7 +254,7 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                                 setFormData({
                                     ...formData,
                                     idKegiatan: item.idKegiatan,
-                                    namaSubSek: item.namaSubsek,
+                                    namaSubsek: item.namaSubsek,
                                     namaKegiatan: item.namaKegiatan,
                                 });
                             }}
@@ -313,12 +318,6 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         type="number"
                         onChange={(e) => setFormData({ ...formData, noHak: e.target.value })}
                     />
-                    <div>
-                        <Typography className="text-sm text-gray-600 mb-1">
-                            Kecamatan
-                        </Typography>
-                        <Input label="Nama Kecamatan" value={formData.namaKecamatan} disabled />
-                    </div>
                     {/* Dropdown Desa */}
                     <div>
                         <Typography className="text-sm text-gray-600 mb-1">
@@ -326,7 +325,7 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         </Typography>
                         <Select
                             options={dropdownData.desa.map((item) => ({
-                                label: item.namaDesa,
+                                label: item.namaDesa + " - " + item.namaKecamata,
                                 value: item.idDesa,
                             }))}
                             placeholder="Pilih Desa"
