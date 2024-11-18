@@ -79,9 +79,9 @@ export function Tables() {
     if (roleNow === "Admin") {
       return (
         <>
-          <IconButton variant="text" color="blue" onClick={() => setSelectedBerkas(berkas)}>
+          {/* <IconButton variant="text" color="blue" onClick={() => setSelectedBerkas(berkas)}>
             <EyeIcon className="h-5 w-5" />
-          </IconButton>
+          </IconButton> */}
           <IconButton variant="text" color="blue">
             <PencilIcon className="h-5 w-5" />
           </IconButton>
