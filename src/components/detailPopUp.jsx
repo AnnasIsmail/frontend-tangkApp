@@ -36,7 +36,7 @@ const DetailModal = ({ berkas, onClose }) => {
           <TimelineHeader className="h-3">
             <TimelineIcon />
             <Typography variant="h6" color="blue-gray" className="leading-none text-lg font-bold">
-              {status.nama} - {new Date(status.dateIn).toLocaleDateString()}
+              {status.name} - {new Date(status.dateIn).toLocaleDateString()}
             </Typography>
           </TimelineHeader>
           <TimelineBody className="pb-4">

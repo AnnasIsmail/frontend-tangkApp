@@ -49,12 +49,12 @@ export function Home() {
             icon={React.createElement(icon, {
               className: "w-6 h-6 text-white",
             })}
-            footer={
-              <Typography className="font-normal text-blue-gray-600">
-                <strong className={footer.color}>{footer.value}</strong>
-                &nbsp;{footer.label}
-              </Typography>
-            }
+            // footer={
+            //   <Typography className="font-normal text-blue-gray-600">
+            //     <strong className={footer.color}>{footer.value}</strong>
+            //     &nbsp;{footer.label}
+            //   </Typography>
+            // }
           />
         ))}
       </div>
