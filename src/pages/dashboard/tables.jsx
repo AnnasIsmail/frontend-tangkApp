@@ -104,7 +104,11 @@ export function Tables() {
           >
             <PencilIcon className="h-5 w-5" />
           </IconButton>
-          <IconButton variant="text" color="red">
+          <IconButton
+            variant="text"
+            color="red"
+            onClick={() => handleDeleteBerkas(berkas._id)} // Panggil fungsi hapus
+          >
             <TrashIcon className="h-5 w-5" />
           </IconButton>
         </>
@@ -133,6 +137,31 @@ export function Tables() {
     }
   };
   
+  const handleDeleteBerkas = async (idBerkas) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus berkas ini?")) {
+      try {
+        const response = await axios.delete(`berkas/${idBerkas}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Role: roleNow,
+          },
+        });
+  
+        if (response.status === 200) {
+          alert("Berkas berhasil dihapus!");
+          setBerkasData((prevData) =>
+            prevData.filter((berkas) => berkas._id !== idBerkas)
+          );
+        } else {
+          throw new Error("Gagal menghapus berkas.");
+        }
+      } catch (error) {
+        console.error("Error saat menghapus berkas:", error);
+        alert("Terjadi kesalahan saat menghapus berkas.");
+      }
+    }
+  };
+
   const fetchFilteredData = async (filters) => {
     setLoading(true);
     try {

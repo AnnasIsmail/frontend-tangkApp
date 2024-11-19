@@ -44,19 +44,19 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                 setDropdownData({
                     kegiatan: kegiatanRes.data.map((item) => ({
                         label: item.namaKegiatan,
-                        value: item.idKegiatan,
+                        value: item._id,
                     })),
                     jenisHak: jenisHakRes.data.map((item) => ({
                         label: item.JenisHak,
-                        value: item.idJenisHak,
+                        value: item._id,
                     })),
                     desa: desaRes.data.map((item) => ({
                         label: item.namaDesa + " - " + item.namaKecamatan,
-                        value: item.idDesa,
+                        value: item._id,
                     })),
                     petugasUkur: petugasUkurRes.data.map((item) => ({
                         label: item.nama,
-                        value: item.idPetugasUkur,
+                        value: item._id,
                     })),
                 });
             } catch (error) {
