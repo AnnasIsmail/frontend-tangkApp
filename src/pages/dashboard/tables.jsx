@@ -7,13 +7,14 @@ import {
   IconButton,
   Button,
 } from "@material-tailwind/react";
-import { PencilIcon, TrashIcon, PlusIcon, EyeIcon } from "@heroicons/react/24/outline"; // Import icons
+import { PencilIcon, TrashIcon, PlusIcon, EyeIcon, FunnelIcon} from "@heroicons/react/24/outline"; // Import icons
 import { useMaterialTailwindController } from "@/context";
 import { useEffect, useState } from "react";
 import axios from "../../api/apiTangkApp"; // Import Axios instance
 import PopUpInsertBerkas from "@/components/InsertPopup";
 import DetailModal from "@/components/detailPopUp"; // Import the detail modal
 import PopUpUpdateBerkas from "@/components/PopUpUpdateBerkas";
+import FilterPopUp from "@/components/filterPopUp";
 
 export function Tables() {
   const [controller] = useMaterialTailwindController();
@@ -25,6 +26,15 @@ export function Tables() {
   const [showPopup, setShowPopup] = useState(false);
   const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const [selectedBerkas, setSelectedBerkas] = useState(null); // State for selected berkas for detail modal
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+//   const fetchFilteredData = async (filters) => {
+//     try {
+//         const response = await axios.post("berkas/filter", filters); // API filter
+//         setBerkasData(response.data.data || []);
+//     } catch (error) {
+//         console.error("Gagal memuat data:", error);
+//     }
+// };
 
   const [refresh, setRefresh] = useState(false);
 
@@ -131,6 +141,23 @@ export function Tables() {
     }
   };
 
+  const fetchFilteredData = async (filters) => {
+    console.log("masuk");
+    
+    setLoading(true);
+    try {
+      const response = await axios.post("berkas/filter", {
+        ...filters,
+        role: roleNow, // Kirim role sebagai bagian dari filter
+      });
+      setBerkasData(response.data.data || []);
+    } catch (error) {
+      console.error("Gagal memuat data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
@@ -142,6 +169,20 @@ export function Tables() {
           <Typography variant="h6" color="white">
             Berkas Table
           </Typography>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Button
+              variant="gradient"
+              color="blue"
+              className="flex items-center gap-2"
+              onClick={() => setIsFilterOpen(true)}
+            >
+              <FunnelIcon className="h-5 w-5" />  Filter
+            </Button>
+            <FilterPopUp
+                isOpen={isFilterOpen}
+                onClose={() => setIsFilterOpen(false)}
+                onApplyFilter={fetchFilteredData}
+            />
           {roleNow === "Admin" && (
             <Button
               variant="gradient"
@@ -152,6 +193,7 @@ export function Tables() {
               <PlusIcon className="h-5 w-5" /> Tambah
             </Button>
           )}
+          </div>
         </CardHeader>
         <CardBody className="px-0 pt-0 pb-2">
           {loading ? (
