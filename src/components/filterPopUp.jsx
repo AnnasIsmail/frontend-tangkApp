@@ -7,24 +7,24 @@ import {
     Input,
     Button,
     Typography,
-    Select,
-    Option,
 } from "@material-tailwind/react";
+import Select from "react-select";
 import axios from "../api/apiTangkApp";
 
 const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
-    const [filters, setFilters] = useState({
+    const initialFilters = {
         tanggalTerimaStart: "",
         tanggalTerimaEnd: "",
         kegiatan: "",
         jenisHak: "",
         desa: "",
         petugasUkur: "",
-    });
+    };
+
+    const [filters, setFilters] = useState(initialFilters);
 
     const [dropdownData, setDropdownData] = useState({
         kegiatan: [],
-        pemohon: [],
         jenisHak: [],
         desa: [],
         petugasUkur: [],
@@ -34,30 +34,24 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
     useEffect(() => {
         const fetchDropdownData = async () => {
             try {
-                const [kegiatanRes, pemohonRes, jenisHakRes, desaRes, petugasUkurRes] =
-                    await Promise.all([
-                        axios.get("berkas/kegiatan"),
-                        axios.get("berkas/pemohon"),
-                        axios.get("berkas/jenisHak"),
-                        axios.get("berkas/desa"),
-                        axios.get("berkas/petugasUkur"),
-                    ]);
+                const [kegiatanRes, jenisHakRes, desaRes, petugasUkurRes] = await Promise.all([
+                    axios.get("berkas/kegiatan"),
+                    axios.get("berkas/jenisHak"),
+                    axios.get("berkas/desa"),
+                    axios.get("berkas/petugasUkur"),
+                ]);
 
                 setDropdownData({
                     kegiatan: kegiatanRes.data.map((item) => ({
                         label: item.namaKegiatan,
                         value: item.idKegiatan,
                     })),
-                    pemohon: pemohonRes.data.map((item) => ({
-                        label: item.namaPemohon,
-                        value: item.idPemohon,
-                    })),
                     jenisHak: jenisHakRes.data.map((item) => ({
                         label: item.JenisHak,
                         value: item.idJenisHak,
                     })),
                     desa: desaRes.data.map((item) => ({
-                        label: `${item.namaDesa} - ${item.namaKecamatan}`,
+                        label: item.namaDesa + " - " + item.namaKecamatan,
                         value: item.idDesa,
                     })),
                     petugasUkur: petugasUkurRes.data.map((item) => ({
@@ -80,13 +74,22 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
         setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
     };
 
-    const handleSelectChange = (key, value) => {
-        setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
+    const handleSelectChange = (key, selectedOption) => {
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [key]: selectedOption ? selectedOption.value : "",
+        }));
     };
 
     const handleApplyFilter = () => {
-        onApplyFilter(filters); 
-        onClose(); 
+        onApplyFilter(filters);
+        onClose();
+    };
+
+    const handleResetFilter = () => {
+        setFilters(initialFilters);
+        onApplyFilter(initialFilters);
+        onClose();
     };
 
     if (!isOpen) return null;
@@ -128,15 +131,14 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                             Kegiatan
                         </Typography>
                         <Select
-                            label="Pilih Kegiatan"
-                            onChange={(value) => handleSelectChange("kegiatan", value)}
-                        >
-                            {dropdownData.kegiatan.map((item) => (
-                                <Option key={item.value} value={item.value}>
-                                    {item.label}
-                                </Option>
-                            ))}
-                        </Select>
+                            options={dropdownData.kegiatan}
+                            placeholder="Pilih Kegiatan"
+                            isClearable
+                            value={dropdownData.kegiatan.find(
+                                (option) => option.value === filters.kegiatan
+                            )}
+                            onChange={(selected) => handleSelectChange("kegiatan", selected)}
+                        />
                     </div>
 
                     {/* Dropdown Jenis Hak */}
@@ -145,15 +147,14 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                             Jenis Hak
                         </Typography>
                         <Select
-                            label="Pilih Jenis Hak"
-                            onChange={(value) => handleSelectChange("jenisHak", value)}
-                        >
-                            {dropdownData.jenisHak.map((item) => (
-                                <Option key={item.value} value={item.value}>
-                                    {item.label}
-                                </Option>
-                            ))}
-                        </Select>
+                            options={dropdownData.jenisHak}
+                            placeholder="Pilih Jenis Hak"
+                            isClearable
+                            value={dropdownData.jenisHak.find(
+                                (option) => option.value === filters.jenisHak
+                            )}
+                            onChange={(selected) => handleSelectChange("jenisHak", selected)}
+                        />
                     </div>
 
                     {/* Dropdown Desa */}
@@ -162,15 +163,14 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                             Desa
                         </Typography>
                         <Select
-                            label="Pilih Desa"
-                            onChange={(value) => handleSelectChange("desa", value)}
-                        >
-                            {dropdownData.desa.map((item) => (
-                                <Option key={item.value} value={item.value}>
-                                    {item.label}
-                                </Option>
-                            ))}
-                        </Select>
+                            options={dropdownData.desa}
+                            placeholder="Pilih Desa"
+                            isClearable
+                            value={dropdownData.desa.find(
+                                (option) => option.value === filters.desa
+                            )}
+                            onChange={(selected) => handleSelectChange("desa", selected)}
+                        />
                     </div>
 
                     {/* Dropdown Petugas Ukur */}
@@ -179,19 +179,21 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                             Petugas Ukur
                         </Typography>
                         <Select
-                            label="Pilih Petugas Ukur"
-                            onChange={(value) => handleSelectChange("petugasUkur", value)}
-                        >
-                            {dropdownData.petugasUkur.map((item) => (
-                                <Option key={item.value} value={item.value}>
-                                    {item.label}
-                                </Option>
-                            ))}
-                        </Select>
+                            options={dropdownData.petugasUkur}
+                            placeholder="Pilih Petugas Ukur"
+                            isClearable
+                            value={dropdownData.petugasUkur.find(
+                                (option) => option.value === filters.petugasUkur
+                            )}
+                            onChange={(selected) => handleSelectChange("petugasUkur", selected)}
+                        />
                     </div>
                 </div>
             </DialogBody>
             <DialogFooter>
+                <Button variant="text" color="red" onClick={handleResetFilter} className="mr-2">
+                    Reset
+                </Button>
                 <Button variant="text" color="red" onClick={onClose} className="mr-2">
                     Batal
                 </Button>

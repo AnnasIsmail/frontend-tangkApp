@@ -39,6 +39,8 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
         namaDesa: "",
         namaKecamatan: "",
         idPetugasUkur: "",
+        namaPetugasUkur: "",
+        idPetugasSPS: "",
         namaPetugasSPS: "",
         tanggalSPS: "",
         statusAlihMedia: false,
@@ -46,7 +48,9 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
         PIC: [], 
         idUser: user._id
     });
-
+    useEffect(()=>{
+        console.log(formData)
+    },[formData])
     const [newPIC, setNewPIC] = useState({ namaPIC: "", kontakPIC: "" }); // Menampung input PIC baru
 
     const [dropdownData, setDropdownData] = useState({
@@ -55,6 +59,7 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
         jenisHak: [],
         desa: [],
         petugasUkur: [],
+        petugasSPS:[]
     });
 
     useEffect(() => {
@@ -72,13 +77,14 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
     useEffect(() => {
         const fetchDropdownData = async () => {
             try {
-                const [kegiatanRes, pemohonRes, jenisHakRes, desaRes, petugasUkurRes] =
+                const [kegiatanRes, pemohonRes, jenisHakRes, desaRes, petugasUkurRes, petugasSPSRes] =
                     await Promise.all([
                         axios.get("berkas/kegiatan"),
                         axios.get("berkas/pemohon"),
                         axios.get("berkas/jenisHak"),
                         axios.get("berkas/desa"),
                         axios.get("berkas/petugasUkur"),
+                        axios.get("berkas/petugasSPS"),
                     ]);
 
                 setDropdownData({
@@ -87,12 +93,13 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         { label: "Belum Terdaftar", value: "baru", isNew: true },
                         ...pemohonRes.data.map((item) => ({
                             label: item.namaPemohon,
-                            value: item.idPemohon,
+                            value: item._id,
                         })),
                     ],
                     jenisHak: jenisHakRes.data,
                     desa: desaRes.data,
                     petugasUkur: petugasUkurRes.data,
+                    petugasSPS: petugasSPSRes.data
                 });
             } catch (error) {
                 console.error("Gagal mengambil data dropdown:", error);
@@ -244,16 +251,16 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         <Select
                             options={dropdownData.kegiatan.map((item) => ({
                                 label: item.namaKegiatan,
-                                value: item.idKegiatan,
+                                value: item._id,
                             }))}
                             placeholder="Pilih Kegiatan"
                             onChange={(selected) => {
                                 const item = dropdownData.kegiatan.find(
-                                    (k) => k.idKegiatan === selected.value
+                                    (k) => k._id === selected.value
                                 );
                                 setFormData({
                                     ...formData,
-                                    idKegiatan: item.idKegiatan,
+                                    idKegiatan: item._id,
                                     namaSubsek: item.namaSubsek,
                                     namaKegiatan: item.namaKegiatan,
                                 });
@@ -300,14 +307,14 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         <Select
                             options={dropdownData.jenisHak.map((item) => ({
                                 label: item.JenisHak,
-                                value: item.idJenisHak,
+                                value: item._id,
                             }))}
                             placeholder="Pilih Jenis Hak"
                             onChange={(selected) => {
                                 const item = dropdownData.jenisHak.find(
-                                    (jh) => jh.idJenisHak === selected.value
+                                    (jh) => jh._id === selected.value
                                 );
-                                setFormData({ ...formData, idJenisHak: item.idJenisHak, JenisHak: item.JenisHak });
+                                setFormData({ ...formData, idJenisHak: item._id, JenisHak: item.JenisHak });
                             }}
                         />
                     </div>
@@ -325,27 +332,46 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         </Typography>
                         <Select
                             options={dropdownData.desa.map((item) => ({
-                                label: item.namaDesa + " - " + item.namaKecamata,
-                                value: item.idDesa,
+                                label: item.namaDesa + " - " + item.namaKecamatan,
+                                value: item._id,
                             }))}
                             placeholder="Pilih Desa"
                             onChange={(selected) => {
-                                const item = dropdownData.desa.find((d) => d.idDesa === selected.value);
+                                const item = dropdownData.desa.find((d) => d._id === selected.value);
                                 setFormData({
                                     ...formData,
-                                    idDesa: item.idDesa,
+                                    idDesa: item._id,
                                     namaDesa: item.namaDesa,
-                                    namaKecamatan: item.namaKecamata,
+                                    namaKecamatan: item.namaKecamatan,
                                 });
                             }}
                         />
                     </div>
 
-                    <Input
+                    <div>
+                        <Typography className="text-sm text-gray-600 mb-1">
+                            Petugas SPS
+                        </Typography>
+                        <Select
+                            options={dropdownData.petugasSPS.map((item) => ({
+                                label: item.namaPetugas,
+                                value: item._id,
+                            }))}
+                            placeholder="Pilih Petugas SPS"
+                            onChange={(selected) => {
+                                const item = dropdownData.petugasSPS.find(
+                                    (pu) => pu._id === selected.value
+                                );
+                                setFormData({ ...formData, idPetugasSPS: item._id, namaPetugasSPS: item.namaPetugas });
+                            }}
+                        />
+                    </div>
+
+                    {/* <Input
                         label="Nama Petugas SPS"
                         value={formData.namaPetugasSPS}
                         onChange={(e) => setFormData({ ...formData, namaPetugasSPS: e.target.value })}
-                    />
+                    /> */}
 
                     <Input
                         label="Tanggal SPS"
@@ -362,14 +388,14 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         <Select
                             options={dropdownData.petugasUkur.map((item) => ({
                                 label: item.nama,
-                                value: item.idPetugasUkur,
+                                value: item._id,
                             }))}
                             placeholder="Pilih Petugas Ukur"
                             onChange={(selected) => {
                                 const item = dropdownData.petugasUkur.find(
-                                    (pu) => pu.idPetugasUkur === selected.value
+                                    (pu) => pu._id === selected.value
                                 );
-                                setFormData({ ...formData, idPetugasUkur: item.idPetugasUkur });
+                                setFormData({ ...formData, idPetugasUkur: item._id, namaPetugasUkur: item.nama });
                             }}
                         />
                     </div>

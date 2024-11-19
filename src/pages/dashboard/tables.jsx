@@ -25,6 +25,7 @@ export function Tables() {
   const [error, setError] = useState(null); // Error state
   const [showPopup, setShowPopup] = useState(false);
   const [showUpdatePopup, setShowUpdatePopup] = useState(false);
+  const [showDetail, setShowDetailPopUp] = useState(false);
   const [selectedBerkas, setSelectedBerkas] = useState(null); // State for selected berkas for detail modal
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 //   const fetchFilteredData = async (filters) => {
@@ -93,25 +94,16 @@ export function Tables() {
     if (roleNow === "Admin") {
       return (
         <>
-          {/* <IconButton variant="text" color="blue" onClick={() => setSelectedBerkas(berkas)}>
-            <EyeIcon className="h-5 w-5" />
-          </IconButton> */}
-<IconButton
-    variant="text"
-    color="blue"
-    onClick={() => setShowUpdatePopup(true)}
->
-    <PencilIcon className="h-5 w-5" />
-</IconButton>
-{showUpdatePopup && (
-    <PopUpUpdateBerkas
-        data={berkas} // Data berkas yang dipilih
-        onClose={() => setShowUpdatePopup(false)}
-        onUpdateSuccess={(updatedData) => {
-            setRefresh(!refresh);
-        }}
-    />
-)}
+          <IconButton
+            variant="text"
+            color="blue"
+            onClick={() => {
+              setSelectedBerkas(berkas); // Set berkas yang dipilih
+              setShowUpdatePopup(true); // Tampilkan popup
+            }}
+          >
+            <PencilIcon className="h-5 w-5" />
+          </IconButton>
           <IconButton variant="text" color="red">
             <TrashIcon className="h-5 w-5" />
           </IconButton>
@@ -140,10 +132,8 @@ export function Tables() {
       );
     }
   };
-
+  
   const fetchFilteredData = async (filters) => {
-    console.log("masuk");
-    
     setLoading(true);
     try {
       const response = await axios.post("berkas/filter", {
@@ -275,12 +265,12 @@ export function Tables() {
                         </td>
                         <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.status[berkas.status.length - 1].name}
+                            {berkas.status[berkas.status?.length - 1].name}
                           </Typography>
                         </td>
                         <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.status[berkas.status.length - 1]?.statusDetail[berkas.status[berkas.status.length - 1]?.statusDetail.length - 1]?.nama}
+                            {berkas.status[berkas.status?.length - 1]?.statusDetail[berkas.status[berkas.status?.length - 1]?.statusDetail?.length - 1]?.nama}
                             </Typography>
                         </td>
                         <td
@@ -296,7 +286,7 @@ export function Tables() {
                           <IconButton
                             variant="text"
                             color="blue"
-                            onClick={() => setSelectedBerkas(berkas)}
+                            onClick={() => {setSelectedBerkas(berkas); setShowDetailPopUp(true)}}
                           >
                             <EyeIcon className="h-5 w-5" />
                           </IconButton>
@@ -319,10 +309,28 @@ export function Tables() {
           }}
         />
       )}
-      {selectedBerkas && (
+
+      {showUpdatePopup && selectedBerkas && (
+  <PopUpUpdateBerkas
+    data={selectedBerkas} // Kirim data dari selectedBerkas
+    onClose={() => {
+      setShowUpdatePopup(false); // Tutup popup
+      setSelectedBerkas(null); // Reset selectedBerkas
+    }}
+    onUpdateSuccess={(updatedData) => {
+      setBerkasData((prevData) =>
+        prevData.map((berkas) =>
+          berkas._id === updatedData._id ? updatedData : berkas
+        )
+      );
+      setRefresh(!refresh); // Segarkan data tabel
+    }}
+  />
+)}
+      {(selectedBerkas && showDetail) && (
         <DetailModal
           berkas={selectedBerkas}
-          onClose={() => setSelectedBerkas(null)}
+          onClose={() => {setSelectedBerkas(null); setShowDetailPopUp(false)}}
         />
       )}
     </div>
