@@ -1,268 +1,282 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  IconButton,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Avatar,
-  Tooltip,
-  Progress,
+    Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
+    Input,
+    Button,
+    Typography,
+    Alert,
 } from "@material-tailwind/react";
-import {
-  EllipsisVerticalIcon,
-  ArrowUpIcon,
-} from "@heroicons/react/24/outline";
-import { StatisticsCard } from "@/widgets/cards";
-import { StatisticsChart } from "@/widgets/charts";
-import {
-  statisticsCardsData,
-  statisticsChartsData,
-  projectsTableData,
-  ordersOverviewData,
-} from "@/data";
-import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
-import { useMaterialTailwindController } from "../../context";
-import { Link, useNavigate } from "react-router-dom";
+import Select from "react-select";
+import axios from "../../api/apiTangkApp";
+import { useMaterialTailwindController } from "@/context";
 
-export function Home() {
-  const [controller] = useMaterialTailwindController();
-  const { isLoggedIn, user } = controller;
-  const navigate = useNavigate();
+const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: currentYear - 2020 + 1 }, (_, i) => 2020 + i);
 
-  if (!isLoggedIn) {
-    navigate("/auth/sign-in");
-  }
+    const [controller] = useMaterialTailwindController();
+    const { user } = controller;
+    const [alertMessage, setAlertMessage] = useState("");
+    const [validationErrors, setValidationErrors] = useState({});
 
-  return (
-    <div className="mt-12">
-      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
-          <StatisticsCard
-            key={title}
-            {...rest}
-            title={title}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-white",
-            })}
-            footer={
-              <Typography className="font-normal text-blue-gray-600">
-                <strong className={footer.color}>{footer.value}</strong>
-                &nbsp;{footer.label}
-              </Typography>
+    const [formData, setFormData] = useState({
+        idBerkas: "",
+        noBerkas: "",
+        tahunBerkas: currentYear,
+        tanggalTerima: "",
+        idKegiatan: "",
+        namaSubsek: "",
+        namaKegiatan: "",
+        idPemohon: "",
+        namaPemohon: "",
+        pemohonBaru: false,
+        idJenisHak: "",
+        JenisHak: "",
+        noHak: "",
+        idDesa: "",
+        namaDesa: "",
+        namaKecamatan: "",
+        idPetugasUkur: "",
+        namaPetugasUkur: "",
+        idPetugasSPS: "",
+        namaPetugasSPS: "",
+        tanggalSPS: "",
+        statusAlihMedia: false,
+        statusBayarPNBP: false,
+        PIC: [],
+        idUser: user._id,
+    });
+
+    const [dropdownData, setDropdownData] = useState({
+        kegiatan: [],
+        pemohon: [],
+        jenisHak: [],
+        desa: [],
+        petugasUkur: [],
+        petugasSPS: [],
+    });
+
+    useEffect(() => {
+        const fetchDropdownData = async () => {
+            try {
+                const [kegiatanRes, pemohonRes, jenisHakRes, desaRes, petugasUkurRes, petugasSPSRes] =
+                    await Promise.all([
+                        axios.get("berkas/kegiatan"),
+                        axios.get("berkas/pemohon"),
+                        axios.get("berkas/jenisHak"),
+                        axios.get("berkas/desa"),
+                        axios.get("berkas/petugasUkur"),
+                        axios.get("berkas/petugasSPS"),
+                    ]);
+
+                setDropdownData({
+                    kegiatan: kegiatanRes.data,
+                    pemohon: [
+                        { label: "Belum Terdaftar", value: "baru", isNew: true },
+                        ...pemohonRes.data.map((item) => ({
+                            label: item.namaPemohon,
+                            value: item._id,
+                        })),
+                    ],
+                    jenisHak: jenisHakRes.data,
+                    desa: desaRes.data,
+                    petugasUkur: petugasUkurRes.data,
+                    petugasSPS: petugasSPSRes.data,
+                });
+            } catch (error) {
+                console.error("Gagal mengambil data dropdown:", error);
             }
-          />
-        ))}
-      </div>
-      <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
-        {statisticsChartsData.map((props) => (
-          <StatisticsChart
-            key={props.title}
-            {...props}
-            footer={
-              <Typography
-                variant="small"
-                className="flex items-center font-normal text-blue-gray-600"
-              >
-                <ClockIcon strokeWidth={2} className="h-4 w-4 text-blue-gray-400" />
-                &nbsp;{props.footer}
-              </Typography>
-            }
-          />
-        ))}
-      </div>
-      <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
-          <CardHeader
-            floated={false}
-            shadow={false}
-            color="transparent"
-            className="m-0 flex items-center justify-between p-6"
-          >
-            <div>
-              <Typography variant="h6" color="blue-gray" className="mb-1">
-                Projects
-              </Typography>
-              <Typography
-                variant="small"
-                className="flex items-center gap-1 font-normal text-blue-gray-600"
-              >
-                <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
-                <strong>30 done</strong> this month
-              </Typography>
-            </div>
-            <Menu placement="left-start">
-              <MenuHandler>
-                <IconButton size="sm" variant="text" color="blue-gray">
-                  <EllipsisVerticalIcon
-                    strokeWidth={3}
-                    fill="currenColor"
-                    className="h-6 w-6"
-                  />
-                </IconButton>
-              </MenuHandler>
-              <MenuList>
-                <MenuItem>Action</MenuItem>
-                <MenuItem>Another Action</MenuItem>
-                <MenuItem>Something else here</MenuItem>
-              </MenuList>
-            </Menu>
-          </CardHeader>
-          <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-            <table className="w-full min-w-[640px] table-auto">
-              <thead>
-                <tr>
-                  {["companies", "members", "budget", "completion"].map(
-                    (el) => (
-                      <th
-                        key={el}
-                        className="border-b border-blue-gray-50 py-3 px-6 text-left"
-                      >
-                        <Typography
-                          variant="small"
-                          className="text-[11px] font-medium uppercase text-blue-gray-400"
-                        >
-                          {el}
-                        </Typography>
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {projectsTableData.map(
-                  ({ img, name, members, budget, completion }, key) => {
-                    const className = `py-3 px-5 ${
-                      key === projectsTableData.length - 1
-                        ? ""
-                        : "border-b border-blue-gray-50"
-                    }`;
+        };
 
-                    return (
-                      <tr key={name}>
-                        <td className={className}>
-                          <div className="flex items-center gap-4">
-                            <Avatar src={img} alt={name} size="sm" />
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {name}
-                            </Typography>
-                          </div>
-                        </td>
-                        <td className={className}>
-                          {members.map(({ img, name }, key) => (
-                            <Tooltip key={name} content={name}>
-                              <Avatar
-                                src={img}
-                                alt={name}
-                                size="xs"
-                                variant="circular"
-                                className={`cursor-pointer border-2 border-white ${
-                                  key === 0 ? "" : "-ml-2.5"
-                                }`}
-                              />
-                            </Tooltip>
-                          ))}
-                        </td>
-                        <td className={className}>
-                          <Typography
-                            variant="small"
-                            className="text-xs font-medium text-blue-gray-600"
-                          >
-                            {budget}
-                          </Typography>
-                        </td>
-                        <td className={className}>
-                          <div className="w-10/12">
-                            <Typography
-                              variant="small"
-                              className="mb-1 block text-xs font-medium text-blue-gray-600"
-                            >
-                              {completion}%
-                            </Typography>
-                            <Progress
-                              value={completion}
-                              variant="gradient"
-                              color={completion === 100 ? "green" : "blue"}
-                              className="h-1"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
-        <Card className="border border-blue-gray-100 shadow-sm">
-          <CardHeader
-            floated={false}
-            shadow={false}
-            color="transparent"
-            className="m-0 p-6"
-          >
-            <Typography variant="h6" color="blue-gray" className="mb-2">
-              Orders Overview
-            </Typography>
+        fetchDropdownData();
+    }, []);
+
+    const handleInsert = async () => {
+        const errors = {};
+
+        if (!formData.noBerkas) errors.noBerkas = "No Berkas wajib diisi.";
+        if (!formData.tanggalTerima) errors.tanggalTerima = "Tanggal Terima wajib diisi.";
+        if (!formData.idKegiatan) errors.idKegiatan = "Kegiatan wajib dipilih.";
+        if (!formData.namaSubsek) errors.namaSubsek = "Nama Subseksi wajib diisi.";
+        if (!formData.namaKegiatan) errors.namaKegiatan = "Nama Kegiatan wajib diisi.";
+        if (!formData.pemohonBaru && !formData.idPemohon) {
+            errors.idPemohon = "Pemohon wajib dipilih.";
+        }
+        if (formData.pemohonBaru && !formData.namaPemohon) {
+            errors.namaPemohon = "Nama Pemohon Baru wajib diisi.";
+        }
+        if (!formData.idJenisHak) errors.idJenisHak = "Jenis Hak wajib dipilih.";
+        if (!formData.JenisHak) errors.JenisHak = "Nama Jenis Hak wajib diisi.";
+        if (!formData.noHak) errors.noHak = "No Hak wajib diisi.";
+        if (!formData.idDesa) errors.idDesa = "Desa wajib dipilih.";
+        if (!formData.namaDesa) errors.namaDesa = "Nama Desa wajib diisi.";
+        if (!formData.namaKecamatan) errors.namaKecamatan = "Nama Kecamatan wajib diisi.";
+        if (!formData.namaPetugasSPS) errors.namaPetugasSPS = "Petugas SPS wajib dipilih.";
+        if (!formData.tanggalSPS) errors.tanggalSPS = "Tanggal SPS wajib diisi.";
+
+        if (Object.keys(errors).length > 0) {
+            setValidationErrors(errors);
+            setAlertMessage("Harap periksa semua field yang wajib diisi!");
+            return;
+        }
+
+        setValidationErrors({});
+        setLoading(true);
+        try {
+            const response = await axios.post("berkas/insert", formData);
+            if (response.status === 200) {
+                onInsertSuccess(response.data);
+                onClose();
+            }
+        } catch (error) {
+            console.error("Gagal menambahkan data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const renderInputField = (label, name, type = "text", isDisabled = false) => (
+        <div>
             <Typography
-              variant="small"
-              className="flex items-center gap-1 font-normal text-blue-gray-600"
+                className={`text-sm mb-1 ${
+                    validationErrors[name] ? "text-red-500" : "text-gray-600"
+                }`}
             >
-              <ArrowUpIcon
-                strokeWidth={3}
-                className="h-3.5 w-3.5 text-green-500"
-              />
-              <strong>24%</strong> this month
+                {label}
             </Typography>
-          </CardHeader>
-          <CardBody className="pt-0">
-            {ordersOverviewData.map(
-              ({ icon, color, title, description }, key) => (
-                <div key={title} className="flex items-start gap-4 py-3">
-                  <div
-                    className={`relative p-1 after:absolute after:-bottom-6 after:left-2/4 after:w-0.5 after:-translate-x-2/4 after:bg-blue-gray-50 after:content-[''] ${
-                      key === ordersOverviewData.length - 1
-                        ? "after:h-0"
-                        : "after:h-4/6"
-                    }`}
-                  >
-                    {React.createElement(icon, {
-                      className: `!w-5 !h-5 ${color}`,
-                    })}
-                  </div>
-                  <div>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="block font-medium"
-                    >
-                      {title}
-                    </Typography>
-                    <Typography
-                      as="span"
-                      variant="small"
-                      className="text-xs font-medium text-blue-gray-500"
-                    >
-                      {description}
-                    </Typography>
-                  </div>
-                </div>
-              )
+            <Input
+                label={label}
+                name={name}
+                type={type}
+                value={formData[name]}
+                disabled={isDisabled}
+                onChange={(e) => setFormData({ ...formData, [name]: e.target.value })}
+                className={`${
+                    validationErrors[name] ? "border-red-500" : "border-gray-300"
+                }`}
+            />
+            {validationErrors[name] && (
+                <Typography className="text-red-500 text-sm mt-1">
+                    {validationErrors[name]}
+                </Typography>
             )}
-          </CardBody>
-        </Card>
-      </div>
-    </div>
-  );
-}
+        </div>
+    );
 
-export default Home;
+    const renderSelectField = (label, name, options, isDropdown = true) => (
+        <div>
+            <Typography
+                className={`text-sm mb-1 ${
+                    validationErrors[name] ? "text-red-500" : "text-gray-600"
+                }`}
+            >
+                {label}
+            </Typography>
+            {isDropdown ? (
+                <Select
+                    options={options}
+                    placeholder={`Pilih ${label}`}
+                    className={`${
+                        validationErrors[name] ? "border-red-500" : "border-gray-300"
+                    }`}
+                    onChange={(selected) =>
+                        setFormData({ ...formData, [name]: selected.value })
+                    }
+                />
+            ) : (
+                <Input
+                    label={label}
+                    name={name}
+                    value={formData[name]}
+                    onChange={(e) => setFormData({ ...formData, [name]: e.target.value })}
+                />
+            )}
+            {validationErrors[name] && (
+                <Typography className="text-red-500 text-sm mt-1">
+                    {validationErrors[name]}
+                </Typography>
+            )}
+        </div>
+    );
+
+    return (
+        <Dialog open={true} handler={onClose}>
+            <DialogHeader>Tambah Berkas Baru</DialogHeader>
+            <DialogBody divider className="overflow-y-auto max-h-[80vh]">
+                {alertMessage && (
+                    <Alert color="red" className="mb-4">
+                        {alertMessage}
+                    </Alert>
+                )}
+                <div className="grid gap-4">
+                    {renderInputField("No Berkas", "noBerkas", "number")}
+                    {renderInputField("Tanggal Terima", "tanggalTerima", "date")}
+                    {renderSelectField(
+                        "Kegiatan",
+                        "idKegiatan",
+                        dropdownData.kegiatan.map((item) => ({
+                            label: item.namaKegiatan,
+                            value: item._id,
+                        }))
+                    )}
+                    {renderInputField("Nama Subseksi", "namaSubsek")}
+                    {renderInputField("Nama Kegiatan", "namaKegiatan")}
+                    {renderSelectField(
+                        "Pemohon",
+                        "idPemohon",
+                        dropdownData.pemohon.map((item) => ({
+                            label: item.label,
+                            value: item.value,
+                        })),
+                        true
+                    )}
+                    {renderSelectField(
+                        "Jenis Hak",
+                        "idJenisHak",
+                        dropdownData.jenisHak.map((item) => ({
+                            label: item.JenisHak,
+                            value: item._id,
+                        }))
+                    )}
+                    {renderInputField("No Hak", "noHak", "number")}
+                    {renderSelectField(
+                        "Desa",
+                        "idDesa",
+                        dropdownData.desa.map((item) => ({
+                            label: `${item.namaDesa} - ${item.namaKecamatan}`,
+                            value: item._id,
+                        }))
+                    )}
+                    {renderInputField("Nama Kecamatan", "namaKecamatan")}
+                    {renderSelectField(
+                        "Petugas SPS",
+                        "idPetugasSPS",
+                        dropdownData.petugasSPS.map((item) => ({
+                            label: item.namaPetugas,
+                            value: item._id,
+                        }))
+                    )}
+                    {renderInputField("Tanggal SPS", "tanggalSPS", "date")}
+                </div>
+            </DialogBody>
+            <DialogFooter>
+                <Button variant="text" color="red" onClick={onClose} className="mr-2">
+                    Batal
+                </Button>
+                <Button
+                    variant="gradient"
+                    color="blue"
+                    onClick={handleInsert}
+                    disabled={loading}
+                >
+                    {loading ? "Loading..." : "Tambah"}
+                </Button>
+            </DialogFooter>
+        </Dialog>
+    );
+};
+
+export default PopUpInsertBerkas;

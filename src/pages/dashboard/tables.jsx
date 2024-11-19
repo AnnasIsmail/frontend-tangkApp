@@ -304,8 +304,8 @@ export function Tables() {
         <PopUpInsertBerkas
           onClose={() => setShowPopup(false)}
           onInsertSuccess={(newBerkas) => {
-            setBerkasData((prevData) => [...prevData, newBerkas]);
             setShowPopup(false);
+            setRefresh(!refresh);
           }}
         />
       )}
