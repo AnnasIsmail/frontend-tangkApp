@@ -186,7 +186,7 @@ export function Tables() {
           className="mb-8 p-6 flex justify-between items-center"
         >
           <Typography variant="h6" color="white">
-            Berkas Table
+            Tabel Berkas Saya
           </Typography>
           <div style={{ display: "flex", gap: "10px" }}>
             <Button
