@@ -12,6 +12,7 @@ import axios from "../../api/apiTangkApp";
 import PopUpInsertPetugas from "@/components/petugas_ukur/InsertPetugasUkur";
 import PopUpUpdatePetugas from "@/components/petugas_ukur/PopUpUpdatePetugasUkur";
 import { useMaterialTailwindController } from "@/context";
+import { Navigate } from "react-router-dom";
 
 export function PetugasUkur () {
   const [petugasData, setPetugasData] = useState([]);
@@ -22,10 +23,10 @@ export function PetugasUkur () {
   const [selectedPetugas, setSelectedPetugas] = useState(null);
   const [controller] = useMaterialTailwindController();
   const { roleNow, token } = controller;
+  const [refresh, setRefresh] = useState(false);
 
+  if (roleNow !== "Admin") return <Navigate to="/dashboard/home" replace />;
   useEffect(() => {
-    if (roleNow !== "Admin") return; // Batasi akses hanya untuk Admin
-
     const fetchPetugas = async () => {
       setLoading(true);
       try {
@@ -41,7 +42,7 @@ export function PetugasUkur () {
     };
 
     fetchPetugas();
-  }, [roleNow, token]);
+  }, [roleNow, token, refresh]);
 
   const handleDeletePetugas = async (id) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus petugas ini?")) {
@@ -49,7 +50,7 @@ export function PetugasUkur () {
         await axios.delete(`petugas-ukur/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setPetugasData((prevData) => prevData.filter((item) => item._id !== id));
+        setRefresh(!refresh);
         alert("Petugas berhasil dihapus!");
       } catch (error) {
         alert("Gagal menghapus petugas.");
@@ -88,7 +89,7 @@ export function PetugasUkur () {
               <table className="w-full table-auto">
                 <thead>
                   <tr>
-                    {["ID Petugas", "NIK", "Nama", "Action"].map((header) => (
+                    {["NIK", "Nama", "Action"].map((header) => (
                       <th key={header} className="text-left p-2">
                         {header}
                       </th>
@@ -98,7 +99,6 @@ export function PetugasUkur () {
                 <tbody>
                   {petugasData.map((petugas) => (
                     <tr key={petugas._id}>
-                      <td className="p-2">{petugas.idPetugasUkur}</td>
                       <td className="p-2">{petugas.NIK}</td>
                       <td className="p-2">{petugas.nama}</td>
                       <td className="p-2 flex gap-2">
@@ -133,7 +133,7 @@ export function PetugasUkur () {
         <PopUpInsertPetugas
           onClose={() => setShowInsertPopup(false)}
           onInsertSuccess={(newPetugas) => {
-            setPetugasData((prev) => [...prev, newPetugas]);
+            setRefresh(!refresh);
             setShowInsertPopup(false);
           }}
         />
@@ -144,11 +144,12 @@ export function PetugasUkur () {
           data={selectedPetugas}
           onClose={() => setShowUpdatePopup(false)}
           onUpdateSuccess={(updatedPetugas) => {
-            setPetugasData((prev) =>
-              prev.map((item) =>
-                item._id === updatedPetugas._id ? updatedPetugas : item
-              )
-            );
+            // setPetugasData((prev) =>
+            //   prev.map((item) =>
+            //     item._id === updatedPetugas._id ? updatedPetugas : item
+            //   )
+            // );
+            setRefresh(!refresh);
             setShowUpdatePopup(false);
           }}
         />
