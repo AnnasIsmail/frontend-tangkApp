@@ -6,7 +6,7 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Tables, PetugasUkur, Notifications } from "@/pages/dashboard";
+import { Home, Tables, PetugasUkur, PetugasSPS, Users, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 
 const icon = {
@@ -35,7 +35,21 @@ export const routes = [
         path: "/petugas-ukur",
         element: <PetugasUkur />, 
         role: "Admin"
-      }
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "Petugas SPS",
+        path: "/petugas-sps",
+        element: <PetugasSPS />,
+        role: "Admin"
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "Users",
+        path: "/users",
+        element: <Users />,
+        role: "Admin"
+      },
       // {
       //   icon: <UserCircleIcon {...icon} />,
       //   name: "profile",
