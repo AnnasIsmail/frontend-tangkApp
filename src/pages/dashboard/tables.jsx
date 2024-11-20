@@ -264,7 +264,7 @@ export function Tables() {
       onClose={() => setIsFilterOpen(false)}
       onApplyFilter={fetchFilteredData}
     />
-    {roleNow === "Admin" && (
+    {roleNow === "Admin" || roleNow === "PelaksanaEntri" && (
       <Button
         variant="gradient"
         color="blue"

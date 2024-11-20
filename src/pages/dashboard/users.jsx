@@ -6,6 +6,7 @@ import {
   Typography,
   Button,
   IconButton,
+  Chip,
 } from "@material-tailwind/react";
 import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
 import axios from "../../api/apiTangkApp";
@@ -13,6 +14,19 @@ import PopUpInsertUser from "@/components/users/InsertUser";
 import PopUpUpdateUser from "@/components/users/UpdateUser";
 import { useMaterialTailwindController } from "@/context";
 import { Navigate } from "react-router-dom";
+
+const colors = [
+  "blue",
+  "red",
+  "green",
+  "amber",
+  "pink",
+  "indigo",
+  "purple",
+  "teal",
+  "cyan"
+];
+
 
 export function Users() {
   const [usersData, setUsersData] = useState([]);
@@ -31,7 +45,7 @@ export function Users() {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("users", {
+        const response = await axios.get("user", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsersData(response.data || []);
@@ -48,7 +62,7 @@ export function Users() {
   const handleDeleteUser = async (id) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus user ini?")) {
       try {
-        await axios.delete(`users/${id}`, {
+        await axios.delete(`user/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRefresh(!refresh);
@@ -57,6 +71,11 @@ export function Users() {
         alert("Gagal menghapus user.");
       }
     }
+  };
+
+  const getRandomColor = () => {
+    const randomIndex = Math.floor(Math.random() * colors.length); // Pilih indeks acak
+    return colors[randomIndex]; // Kembalikan warna berdasarkan indeks acak
   };
 
   return (
@@ -102,7 +121,13 @@ export function Users() {
                     <tr key={user._id}>
                       <td className="p-2">{user.NIK}</td>
                       <td className="p-2">{user.nama}</td>
-                      <td className="p-2">{user.role}</td>
+                      <td className="p-2">
+                        <div style={{ display: "flex", gap: "5px" }}>
+                          {user.role.map((x) => (
+                            <Chip color={getRandomColor()} key={x} value={x} />
+                          ))}
+                        </div>
+                      </td>
                       <td className="p-2 flex gap-2">
                         <IconButton
                           variant="text"

@@ -35,8 +35,8 @@ const PopUpInsertPetugas = ({ onClose, onInsertSuccess }) => {
       const response = await axios.post("petugas-sps", formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.status === 200) {
-        onInsertSuccess(response.data);
+      if (response.status === 201) {
+        onInsertSuccess();
       }
     } catch (error) {
       alert("Gagal menambahkan petugas.");
@@ -53,7 +53,7 @@ const PopUpInsertPetugas = ({ onClose, onInsertSuccess }) => {
           label="Nama Petugas"
           value={formData.namaPetugas}
           onChange={(e) =>
-            setFormData({ ...formData, namaPetugas: e.target.value })
+            setFormData({ ...formData, namaPetugas: e.target.value.toUpperCase() })
           }
           style={{
             borderColor: errors.namaPetugas ? "red" : undefined,
