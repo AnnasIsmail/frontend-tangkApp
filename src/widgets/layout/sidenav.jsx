@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   Avatar,
@@ -15,6 +15,7 @@ import { useMaterialTailwindController, setOpenSidenav, setRoleNow } from "@/con
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav, roleNow, user } = controller;
+  const navigate = useNavigate();
   const sidenavTypes = {
     dark: "bg-gradient-to-br from-gray-800 to-gray-900",
     white: "bg-white shadow-sm",
@@ -22,6 +23,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
   };
 
   const handleChangeRole = (newRole) => {
+    // return <Navigate to="/dashboard/home" replace />;
+    navigate("/dashboard/home");
     setRoleNow(dispatch, newRole);
   };
 
