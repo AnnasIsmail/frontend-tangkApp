@@ -120,7 +120,7 @@ export function Tables() {
             variant="gradient"
             color="green"
             size="sm"
-            onClick={() => console.log("Proses selesai:", berkas.idBerkas)}
+            onClick={() => handleSelesai(berkas._id)} // Panggil handleSelesai
           >
             Selesai
           </Button>
@@ -128,7 +128,7 @@ export function Tables() {
             variant="gradient"
             color="red"
             size="sm"
-            onClick={() => console.log("Proses terhenti:", berkas.idBerkas)}
+            onClick={() => handleTerhenti(berkas._id)} // Panggil handleTerhenti
           >
             Terhenti
           </Button>
@@ -136,6 +136,60 @@ export function Tables() {
       );
     }
   };
+
+  const handleSelesai = async (idBerkas) => {
+    try {
+      const response = await axios.post(
+        `berkas/updateStatus/${idBerkas}/selesai`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Role: roleNow,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        alert("Status berhasil diperbarui ke 'Selesai'!");
+        setRefresh(!refresh); // Refresh data tabel
+      } else {
+        throw new Error("Gagal memperbarui status.");
+      }
+    } catch (error) {
+      console.error("Error saat memperbarui status ke 'Selesai':", error);
+      alert("Terjadi kesalahan saat memperbarui status ke 'Selesai'.");
+    }
+  };
+  
+  const handleTerhenti = async (idBerkas, deskripsiKendala) => {
+    const kendala = prompt("Masukkan deskripsi kendala:");
+    if (!kendala) return;
+  
+    try {
+      const response = await axios.post(
+        `berkas/updateStatus/${idBerkas}/terhenti`,
+        { deskripsiKendala: kendala },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Role: roleNow,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        alert("Status berhasil diperbarui ke 'Terhenti'!");
+        setRefresh(!refresh); // Refresh data tabel
+      } else {
+        throw new Error("Gagal memperbarui status.");
+      }
+    } catch (error) {
+      console.error("Error saat memperbarui status ke 'Terhenti':", error);
+      alert("Terjadi kesalahan saat memperbarui status ke 'Terhenti'.");
+    }
+  };
+  
   
   const handleDeleteBerkas = async (idBerkas) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus berkas ini?")) {
