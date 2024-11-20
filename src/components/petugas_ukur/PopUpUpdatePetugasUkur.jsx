@@ -42,7 +42,7 @@ const PopUpUpdatePetugas = ({ data, onClose, onUpdateSuccess }) => {
         }
       );
       if (response.status === 200) {
-        onUpdateSuccess(response.data);
+        onUpdateSuccess();
       }
     } catch (error) {
       alert("Gagal memperbarui petugas.");

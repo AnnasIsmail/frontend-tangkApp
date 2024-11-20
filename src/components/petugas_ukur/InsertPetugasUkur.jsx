@@ -68,7 +68,7 @@ const PopUpInsertPetugas = ({ onClose, onInsertSuccess }) => {
           <Input
             label="Nama"
             value={formData.nama}
-            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, nama: e.target.value.toUpperCase() })}
             style={{
               borderColor: errors.nama ? "red" : undefined,
             }}
