@@ -234,40 +234,43 @@ export function Tables() {
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
-        <CardHeader
-          variant="gradient"
-          color="gray"
-          className="mb-8 p-6 flex justify-between items-center"
-        >
-          <Typography variant="h6" color="white">
-            Tabel Berkas Saya
-          </Typography>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <Button
-              variant="gradient"
-              color="blue"
-              className="flex items-center gap-2"
-              onClick={() => setIsFilterOpen(true)}
-            >
-              <FunnelIcon className="h-5 w-5" />  Filter
-            </Button>
-            <FilterPopUp
-                isOpen={isFilterOpen}
-                onClose={() => setIsFilterOpen(false)}
-                onApplyFilter={fetchFilteredData}
-            />
-          {roleNow === "Admin" && (
-            <Button
-              variant="gradient"
-              color="blue"
-              className="flex items-center gap-2"
-              onClick={() => setShowPopup(true)}
-            >
-              <PlusIcon className="h-5 w-5" /> Tambah
-            </Button>
-          )}
-          </div>
-        </CardHeader>
+      <CardHeader
+  variant="gradient"
+  color="gray"
+  className="mb-8 p-6 flex flex-wrap justify-between items-center gap-4"
+>
+  <Typography variant="h6" color="white">
+    Tabel Berkas Saya
+  </Typography>
+  <div className="flex flex-wrap items-center gap-4">
+    <Button
+      variant="gradient"
+      color="blue"
+      className="flex items-center gap-2"
+      onClick={() => setIsFilterOpen(true)}
+    >
+      <FunnelIcon className="h-5 w-5" />
+      <span className="hidden sm:inline">Filter</span>
+    </Button>
+    <FilterPopUp
+      isOpen={isFilterOpen}
+      onClose={() => setIsFilterOpen(false)}
+      onApplyFilter={fetchFilteredData}
+    />
+    {roleNow === "Admin" && (
+      <Button
+        variant="gradient"
+        color="blue"
+        className="flex items-center gap-2"
+        onClick={() => setShowPopup(true)}
+      >
+        <PlusIcon className="h-5 w-5" />
+        <span className="hidden sm:inline">Tambah</span>
+      </Button>
+    )}
+  </div>
+</CardHeader>
+
         <CardBody className="px-0 pt-0 pb-2">
           {loading ? (
             <Typography className="text-center">Loading...</Typography>
