@@ -33,7 +33,8 @@ export const routes = [
         icon: <UserCircleIcon {...icon} />,
         name: "Petugas Ukur",
         path: "/petugas-ukur",
-        element: <PetugasUkur />, // Komponen halaman tabel Petugas Ukur
+        element: <PetugasUkur />, 
+        role: "Admin"
       }
       // {
       //   icon: <UserCircleIcon {...icon} />,
