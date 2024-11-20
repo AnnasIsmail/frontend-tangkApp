@@ -6,7 +6,7 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
+import { Home, Tables, PetugasUkur, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 
 const icon = {
@@ -25,10 +25,16 @@ export const routes = [
       },
       {
         icon: <TableCellsIcon {...icon} />,
-        name: "Berkas",
+        name: "Berkas Saya",
         path: "/berkas",
         element: <Tables />,
       },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "Petugas Ukur",
+        path: "/petugas-ukur",
+        element: <PetugasUkur />, // Komponen halaman tabel Petugas Ukur
+      }
       // {
       //   icon: <UserCircleIcon {...icon} />,
       //   name: "profile",
