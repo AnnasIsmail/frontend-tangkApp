@@ -163,7 +163,16 @@ const PopUpUpdateBerkas = ({ data, onClose, onUpdateSuccess }) => {
         )}
         <div className="grid gap-4">
             {/* ID Berkas */}
-            <Input label="ID Berkas" value={formData.idBerkas} disabled />
+            {/* <Input label="ID Berkas" value={formData.idBerkas} disabled /> */}
+
+            <Input
+                label="Tanggal Terima"
+                type="date"
+                value={formData.tanggalTerima}
+                onChange={(e) =>
+                    setFormData({ ...formData, tanggalTerima: e.target.value })
+                }
+            />
 
             {/* No Berkas */}
             <Input
@@ -186,14 +195,6 @@ const PopUpUpdateBerkas = ({ data, onClose, onUpdateSuccess }) => {
             </div>
 
             {/* Tanggal Terima */}
-            <Input
-                label="Tanggal Terima"
-                type="date"
-                value={formData.tanggalTerima}
-                onChange={(e) =>
-                    setFormData({ ...formData, tanggalTerima: e.target.value })
-                }
-            />
 
             {/* Kegiatan */}
             <div>
@@ -248,7 +249,7 @@ const PopUpUpdateBerkas = ({ data, onClose, onUpdateSuccess }) => {
                         label="Nama Pemohon Baru"
                         value={formData.namaPemohon}
                         onChange={(e) =>
-                            setFormData({ ...formData, namaPemohon: e.target.value })
+                            setFormData({ ...formData, namaPemohon: e.target.value.toUpperCase() })
                         }
                     />
                 )}
