@@ -28,7 +28,7 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
         idBerkas: "",
         noBerkas: "",
         tahunBerkas: currentYear,
-        tanggalTerima: "",
+        tanggalTerima: new Date().toISOString().split('T')[0], // Default tanggal hari ini
         idKegiatan: "",
         namaSubsek: "",
         namaKegiatan: "",
@@ -50,7 +50,7 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
         statusBayarPNBP: false,
         PIC: [], 
         idUser: user._id
-    });
+    });    
 
     const [newPIC, setNewPIC] = useState({ namaPIC: "", kontakPIC: "" }); // Menampung input PIC baru
 
@@ -237,30 +237,31 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
                         />
                     </div>
                     <div>
-                        <Typography
-                            className={`text-sm mb-1 ${
-                                validationErrors.tanggalTerima ? "text-red-500" : "text-gray-600"
-                            }`}
-                        >
-                            Tanggal Terima
-                        </Typography>
-                        <Input
-                            name="tanggalTerima"
-                            type="date"
-                            value={formData.tanggalTerima}
-                            onChange={(e) =>
-                                setFormData({ ...formData, tanggalTerima: e.target.value })
-                            }
-                            className={`${
-                                validationErrors.tanggalTerima ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.tanggalTerima && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.tanggalTerima}
-                            </Typography>
-                        )}
-                    </div>
+    <Typography
+        className={`text-sm mb-1 ${
+            validationErrors.tanggalTerima ? "text-red-500" : "text-gray-600"
+        }`}
+    >
+        Tanggal Terima
+    </Typography>
+    <Input
+        name="tanggalTerima"
+        type="date"
+        value={formData.tanggalTerima} // Default nilai tanggal hari ini
+        onChange={(e) =>
+            setFormData({ ...formData, tanggalTerima: e.target.value })
+        }
+        className={`${
+            validationErrors.tanggalTerima ? "border-red-500" : "border-gray-300"
+        }`}
+    />
+    {validationErrors.tanggalTerima && (
+        <Typography className="text-red-500 text-sm mt-1">
+            {validationErrors.tanggalTerima}
+        </Typography>
+    )}
+</div>
+
                     <div>
                         <Typography
                             className={`text-sm mb-1 ${
