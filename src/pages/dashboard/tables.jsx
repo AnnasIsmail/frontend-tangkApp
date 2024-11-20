@@ -18,7 +18,7 @@ import FilterPopUp from "@/components/filterPopUp";
 
 export function Tables() {
   const [controller] = useMaterialTailwindController();
-  const { roleNow, token } = controller;
+  const { roleNow, token, user } = controller;
 
   const [berkasData, setBerkasData] = useState([]); // State untuk data berkas
   const [loading, setLoading] = useState(true); // Loading state
@@ -38,7 +38,6 @@ export function Tables() {
 // };
 
   const [refresh, setRefresh] = useState(false);
-
   const processBerkasData = (data) => {
     return data.map((berkas) => {
       const lastStatus =
@@ -120,28 +119,36 @@ export function Tables() {
             variant="gradient"
             color="green"
             size="sm"
-            onClick={() => handleSelesai(berkas._id)} // Panggil handleSelesai
+            onClick={() => handleSelesai(berkas._id, berkas.status[berkas.status?.length - 1]?.statusDetail[berkas.status[berkas.status?.length - 1]?.statusDetail?.length - 1]?.nama)} // Panggil handleSelesai
           >
             Selesai
           </Button>
-          <Button
-            variant="gradient"
-            color="red"
-            size="sm"
-            onClick={() => handleTerhenti(berkas._id)} // Panggil handleTerhenti
-          >
-            Terhenti
-          </Button>
+          {
+            (berkas.status[berkas.status?.length - 1]?.statusDetail[berkas.status[berkas.status?.length - 1]?.statusDetail?.length - 1]?.nama !== "Terhenti") &&
+            <Button
+              variant="gradient"
+              color="red"
+              size="sm"
+              onClick={() => handleTerhenti(berkas._id)} // Panggil handleTerhenti
+            >
+              Terhenti
+            </Button>
+          }
         </>
       );
     }
   };
 
-  const handleSelesai = async (idBerkas) => {
+  const handleSelesai = async (idBerkas, status) => {
     try {
+      let notes;
+      if(status === "Terhenti"){
+        notes = prompt("Masukkan deskripsi kendala:");
+        if (!notes) return;
+      }
       const response = await axios.post(
         `berkas/updateStatus/${idBerkas}/selesai`,
-        {},
+        { notes, userIn: user._id, NIK: user.NIK, namaUser: user.nama },
         {
           headers: {
             Authorization: `Bearer ${token}`,

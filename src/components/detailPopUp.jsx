@@ -43,11 +43,17 @@ const DetailModal = ({ berkas, onClose }) => {
             {status?.statusDetail?.map((sub, subIndex) => (
               <div key={subIndex} className="pl-6">
                 <Typography variant="small" color="gray" className="font-normal text-gray-600 text-base">
-                  <strong>{sub.nama}</strong> ({new Date(sub.dateIn).toLocaleDateString()})
+                  <strong>{sub.nama}</strong> ({new Date(sub.dateIn).toLocaleDateString()}) 
+                  {(sub.namaUser) && <> oleh <strong>{sub.namaUser}</strong> </>}
                 </Typography>
                 {sub.deskripsiKendala && (
                   <Typography variant="small" color="red" className="mt-1 text-sm font-medium">
                     Kendala: {sub.deskripsiKendala}
+                  </Typography>
+                )}
+                {sub.notes && (
+                  <Typography variant="small" color="green" className="mt-1 text-sm font-medium">
+                    Catatan Selesai: {sub.notes}
                   </Typography>
                 )}
               </div>
