@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button, Typography } from "@material-tailwind/react";
+import { Input, Button, Typography, Spinner } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import axios from "../../api/apiTangkApp"; // Import instance Axios
-import Cookies from "js-cookie"; // Untuk menyimpan token
-import { useMaterialTailwindController, setLoginStatus, setUserData, setRoleNow, setToken } from "../../context";
+import axios from "../../api/apiTangkApp"; // Import Axios instance
+import Cookies from "js-cookie"; // Cookie management
+import {
+  useMaterialTailwindController,
+  setLoginStatus,
+  setUserData,
+  setRoleNow,
+  setToken,
+} from "../../context";
 
 export function SignIn() {
   const [NIK, setNIK] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [controller, dispatch] = useMaterialTailwindController(); // Access context
+  const [controller, dispatch] = useMaterialTailwindController();
   const { isLoggedIn } = controller;
 
   useEffect(() => {
-    // Jika sudah login, redirect ke dashboard/home
     if (isLoggedIn) {
       navigate("/dashboard/home");
     }
@@ -22,60 +28,61 @@ export function SignIn() {
 
   useEffect(() => {
     const validateToken = async () => {
-      const token = Cookies.get("authToken"); // Ambil token dari cookie
+      const token = Cookies.get("authToken");
+      if (!token) return setLoading(false);
 
-      if (token && !isLoggedIn) {
-        try {
-          // Panggil endpoint check-token untuk validasi token
-          const response = await axios.get("user/check-token");
+      try {
+        const response = await axios.get("user/check-token");
+        const { user } = response.data;
 
-          // Jika token valid, set context login dan data user
-          setLoginStatus(dispatch, true);
-          setUserData(dispatch, response.data.user);
-          setRoleNow(dispatch, response.data.user.role[0]);
-          setToken(dispatch, Cookies.get("authToken"));
-        } catch (error) {
-          console.error("Token tidak valid atau kadaluarsa:", error);
-          Cookies.remove("authToken"); // Hapus token jika tidak valid
-        } finally {
-          setLoading(false); // Selesai loading
-        }
-      } else {
-        setLoading(false); // Jika sudah login atau token tidak ditemukan, selesai loading
+        setLoginStatus(dispatch, true);
+        setUserData(dispatch, user);
+        setRoleNow(dispatch, user.role[0]);
+        setToken(dispatch, token);
+      } catch (err) {
+        console.error("Token invalid or expired:", err);
+        Cookies.remove("authToken");
+      } finally {
+        setLoading(false);
       }
     };
 
     validateToken();
-  }, [dispatch, isLoggedIn]);
+  }, [dispatch]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null); // Reset error state
+    setError(null);
+    setLoading(true);
 
     try {
-      // Kirim permintaan login ke server
       const response = await axios.post("user/login", { NIK, password });
-      const { token, user } = response.data; // Ambil token dan data user dari respons
+      const { token, user } = response.data;
 
-      // Simpan token ke cookie (berlaku selama 12 jam)
       Cookies.set("authToken", token, { expires: 0.5 });
 
-      // Set login status dan user data di context
       setLoginStatus(dispatch, true);
       setUserData(dispatch, user);
       setRoleNow(dispatch, user.role[0]);
-      setToken(dispatch, user.token)
-      
-      // Redirect ke halaman dashboard
+      setToken(dispatch, token);
+
       navigate("/dashboard/home");
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.error); // Tampilkan pesan error dari server
-      } else {
-        setError("Terjadi kesalahan, silakan coba lagi."); // Error default
-      }
+      const errorMessage =
+        err.response?.data?.error || "Terjadi kesalahan, silakan coba lagi.";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner className="h-12 w-12 text-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <section className="m-8 flex gap-4">
@@ -89,7 +96,7 @@ export function SignIn() {
             color="blue-gray"
             className="text-lg font-normal"
           >
-            Masuk dengan NIK dan password untuk masuk.
+            Masuk dengan NIK dan password Anda.
           </Typography>
         </div>
         <form
@@ -97,35 +104,27 @@ export function SignIn() {
           onSubmit={handleLogin}
         >
           <div className="mb-1 flex flex-col gap-6">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="-mb-3 font-medium"
-            >
+            <label className="font-medium text-blue-gray-600">
               NIK
-            </Typography>
-            <Input
-              size="lg"
-              placeholder="1234567890123456"
-              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-              value={NIK}
-              onChange={(e) => setNIK(e.target.value)}
-            />
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="-mb-3 font-medium"
-            >
+              <Input
+                size="lg"
+                placeholder="1234567890123456"
+                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                value={NIK}
+                onChange={(e) => setNIK(e.target.value)}
+              />
+            </label>
+            <label className="font-medium text-blue-gray-600">
               Password
-            </Typography>
-            <Input
-              type="password"
-              size="lg"
-              placeholder="********"
-              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+              <Input
+                type="password"
+                size="lg"
+                placeholder="********"
+                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
           </div>
           {error && (
             <Typography
@@ -137,13 +136,14 @@ export function SignIn() {
             </Typography>
           )}
           <Button className="mt-6" fullWidth type="submit">
-            Sign In
+            {loading ? <Spinner size="sm" /> : "Sign In"}
           </Button>
         </form>
       </div>
       <div className="w-2/5 h-full hidden lg:block">
         <img
           src="/img/TangkApp_logo_pattern.png"
+          alt="Login Illustration"
           className="h-full w-full object-cover rounded-3xl"
         />
       </div>

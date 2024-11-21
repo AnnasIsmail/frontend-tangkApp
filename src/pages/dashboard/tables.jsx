@@ -15,6 +15,7 @@ import PopUpInsertBerkas from "@/components/InsertPopup";
 import DetailModal from "@/components/detailPopUp"; // Import the detail modal
 import PopUpUpdateBerkas from "@/components/PopUpUpdateBerkas";
 import FilterPopUp from "@/components/filterPopUp";
+import PopUpSelesai from '@/components/popupSelesaiSPJ';
 
 export function Tables() {
   const [controller] = useMaterialTailwindController();
@@ -36,6 +37,10 @@ export function Tables() {
 //         console.error("Gagal memuat data:", error);
 //     }
 // };
+
+const [isSelesaiPopupOpen, setIsSelesaiPopupOpen] = useState(false);
+const [selectedPetugas, setSelectedPetugas] = useState("");
+const [isBNPB, setIsBNPB] = useState(false);
 
   const [refresh, setRefresh] = useState(false);
   const processBerkasData = (data) => {
@@ -60,7 +65,7 @@ export function Tables() {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
-
+  
       try {
         const response = await axios.post(
           "berkas",
@@ -72,10 +77,16 @@ export function Tables() {
             },
           }
         );
-
+  
         if (response.status === 200 && Array.isArray(response.data)) {
           const processedData = processBerkasData(response.data);
-          setBerkasData(processedData);
+          
+          // Sort data berdasarkan `dateIn` secara descending (latest first)
+          const sortedData = processedData.sort((a, b) => 
+            new Date(b.dateIn) - new Date(a.dateIn) // Ubah ke `a.dateIn - b.dateIn` untuk ascending
+          );
+  
+          setBerkasData(sortedData);
         } else {
           throw new Error("Data tidak valid atau kosong.");
         }
@@ -85,12 +96,13 @@ export function Tables() {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [roleNow, token, refresh]);
+  
 
   const renderActionButtons = (berkas) => {
-    if (roleNow === "Admin") {
+    if (roleNow === "Admin" || roleNow === "PelaksanaEntri") {
       return (
         <>
           <IconButton
@@ -119,7 +131,7 @@ export function Tables() {
             variant="gradient"
             color="green"
             size="sm"
-            onClick={() => handleSelesai(berkas._id, berkas.status[berkas.status?.length - 1]?.statusDetail[berkas.status[berkas.status?.length - 1]?.statusDetail?.length - 1]?.nama)} // Panggil handleSelesai
+            onClick={() => handleSelesai(berkas._id, berkas.status[berkas.status?.length - 1]?.statusDetail[berkas.status[berkas.status?.length - 1]?.statusDetail?.length - 1]?.nama, berkas)}
           >
             Selesai
           </Button>
@@ -139,30 +151,37 @@ export function Tables() {
     }
   };
 
-  const handleSelesai = async (idBerkas, status) => {
+  const handleSelesai = async (idBerkas, status, berkas) => {
     try {
       let notes;
-      if(status === "Terhenti"){
-        notes = prompt("Masukkan deskripsi kendala:");
-        if (!notes) return;
-      }
-      const response = await axios.post(
-        `berkas/updateStatus/${idBerkas}/selesai`,
-        { notes, userIn: user._id, NIK: user.NIK, namaUser: user.nama },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Role: roleNow,
-          },
+      if(roleNow === "PelaksanaSPJ"){
+        berkas.statusTerhenti = status;
+        setSelectedBerkas(berkas); // Set data berkas
+        setIsSelesaiPopupOpen(true);
+      }else{
+        if(status === "Terhenti"){
+          notes = prompt("Masukkan catatan (opsional): ");
+          if (!notes) return;
         }
-      );
-  
-      if (response.status === 200) {
-        alert("Status berhasil diperbarui ke 'Selesai'!");
-        setRefresh(!refresh); // Refresh data tabel
-      } else {
-        throw new Error("Gagal memperbarui status.");
+        const response = await axios.post(
+          `berkas/updateStatus/${idBerkas}/selesai`,
+          { notes, userIn: user._id, NIK: user.NIK, namaUser: user.nama },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Role: roleNow,
+            },
+          }
+        );
+    
+        if (response.status === 200) {
+          alert("Status berhasil diperbarui ke 'Selesai'!");
+          setRefresh(!refresh); // Refresh data tabel
+        } else {
+          throw new Error("Gagal memperbarui status.");
+        }
       }
+
     } catch (error) {
       console.error("Error saat memperbarui status ke 'Selesai':", error);
       alert("Terjadi kesalahan saat memperbarui status ke 'Selesai'.");
@@ -304,19 +323,19 @@ export function Tables() {
                       "Detail",
                     ].map((el) => (
                       <th
-                        key={el}
-                        className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
+                      key={el}
+                      className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
                           el === "Action" || el === "Detail"
-                            ? "sticky right-0 bg-gray-50 z-10"
-                            : ""
-                        }`}
+                              ? "sticky right-0 bg-gray-50 z-10 hide-on-mobile"
+                              : ""
+                      }`}
                       >
-                        <Typography
-                          variant="small"
-                          className="text-[11px] font-bold uppercase text-blue-gray-400"
-                        >
-                          {el}
-                        </Typography>
+                          <Typography
+                              variant="small"
+                              className="text-[11px] font-bold uppercase text-blue-gray-400"
+                          >
+                              {el}
+                          </Typography>
                       </th>
                     ))}
                   </tr>
@@ -367,7 +386,7 @@ export function Tables() {
                             </Typography>
                         </td>
                         <td
-                          className={`${className} sticky right-0 bg-gray-50 z-10`}
+                          className={`${className} sticky right-0 bg-gray-50 z-10 hide-on-mobile`}
                         >
                           <div className="flex items-center gap-2">
                             {renderActionButtons(berkas)}
@@ -404,27 +423,69 @@ export function Tables() {
       )}
 
       {showUpdatePopup && selectedBerkas && (
-  <PopUpUpdateBerkas
-    data={selectedBerkas} // Kirim data dari selectedBerkas
-    onClose={() => {
-      setShowUpdatePopup(false); // Tutup popup
-      setSelectedBerkas(null); // Reset selectedBerkas
-    }}
-    onUpdateSuccess={(updatedData) => {
-      setBerkasData((prevData) =>
-        prevData.map((berkas) =>
-          berkas._id === updatedData._id ? updatedData : berkas
-        )
-      );
-      setRefresh(!refresh); // Segarkan data tabel
-    }}
-  />
-)}
+      <PopUpUpdateBerkas
+        data={selectedBerkas} // Kirim data dari selectedBerkas
+        onClose={() => {
+          setShowUpdatePopup(false); // Tutup popup
+          setSelectedBerkas(null); // Reset selectedBerkas
+        }}
+        onUpdateSuccess={(updatedData) => {
+          setBerkasData((prevData) =>
+            prevData.map((berkas) =>
+              berkas._id === updatedData._id ? updatedData : berkas
+            )
+          );
+          setRefresh(!refresh); // Segarkan data tabel
+        }}
+      />
+    )}
       {(selectedBerkas && showDetail) && (
         <DetailModal
+          setSelectedBerkas={setSelectedBerkas} 
+          setShowUpdatePopup={setShowUpdatePopup}
+          handleTerhenti={handleTerhenti}
+            handleDeleteBerkas={handleDeleteBerkas}
+          handleSelesai={handleSelesai}
           berkas={selectedBerkas}
-          onClose={() => {setSelectedBerkas(null); setShowDetailPopUp(false)}}
+          onClose={() => {setSelectedBerkas(null); setShowDetailPopUp(false);  }}
         />
+      )}
+      {(isSelesaiPopupOpen) && (
+        <PopUpSelesai
+            isOpen={isSelesaiPopupOpen}
+            onClose={() => setIsSelesaiPopupOpen(false)}
+            data={selectedBerkas}
+            onCompleteSuccess={async ({ idPetugasUkur, namaPetugasUkur, statusBayarPNBP, notes }) => {
+              try {
+                const response = await axios.post(
+                  `berkas/updateStatus/${selectedBerkas._id}/selesai`,
+                  { userIn: user._id, NIK: user.NIK, 
+                    namaUser: user.nama, 
+                    notes, 
+                    role: user.roleNow, 
+                    idPetugasUkur, 
+                    namaPetugasUkur, 
+                    statusBayarPNBP 
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                      Role: roleNow,
+                    },
+                  }
+                );
+                if (response.status === 200) {
+                  alert("Status berhasil diperbarui!");
+                  setRefresh(!refresh);
+                } else {
+                  throw new Error("Gagal memperbarui status.");
+                }
+              } catch (error) {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat memperbarui status.");
+              }
+            }}
+          />
       )}
     </div>
   );

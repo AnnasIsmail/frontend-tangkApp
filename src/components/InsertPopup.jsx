@@ -215,466 +215,314 @@ const PopUpInsertBerkas = ({ onClose, onInsertSuccess }) => {
         }
     }, [alertMessage]);
     return (
-        <Dialog open={true} handler={onClose} >
-            <DialogHeader>Tambah Berkas Baru</DialogHeader>
-            <DialogBody divider className="overflow-y-auto max-h-[80vh]"  ref={popupRef}>
-                {alertMessage && (
-                    <Alert color="red" className="mb-4">
-                        {alertMessage}
-                    </Alert>
-                )}
-                <div className="grid gap-4">
-                    <div style={{ display: "none" }}>
-                        {/* <Typography hidden className="text-sm text-gray-600 mb-1">
-                            ID Berkas
-                        </Typography> */}
-                        <Input hidden
-                            label="ID Berkas"
-                            name="idBerkas"
-                            value={formData.idBerkas}
-                            onChange={(e) => setFormData({ ...formData, idBerkas: e.target.value })}
-                            disabled
-                        />
-                    </div>
-                    <div>
-    <Typography
-        className={`text-sm mb-1 ${
-            validationErrors.tanggalTerima ? "text-red-500" : "text-gray-600"
-        }`}
+        <Dialog
+    open={true}
+    handler={onClose}
+    className="w-full max-w-4xl"
+>
+    <DialogHeader>Tambah Berkas Baru</DialogHeader>
+    <DialogBody
+        divider
+        className="overflow-y-auto max-h-[80vh] px-6"
     >
-        Tanggal Terima
-    </Typography>
-    <Input
-        name="tanggalTerima"
-        type="date"
-        value={formData.tanggalTerima} // Default nilai tanggal hari ini
-        onChange={(e) =>
-            setFormData({ ...formData, tanggalTerima: e.target.value })
-        }
-        className={`${
-            validationErrors.tanggalTerima ? "border-red-500" : "border-gray-300"
-        }`}
-    />
-    {validationErrors.tanggalTerima && (
-        <Typography className="text-red-500 text-sm mt-1">
-            {validationErrors.tanggalTerima}
-        </Typography>
-    )}
-</div>
+        {alertMessage && (
+            <Alert color="red" className="mb-4">
+                {alertMessage}
+            </Alert>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Tanggal Terima */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.tanggalTerima ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    Tanggal Terima
+                </Typography>
+                <Input
+                    name="tanggalTerima"
+                    type="date"
+                    value={formData.tanggalTerima}
+                    onChange={(e) =>
+                        setFormData({ ...formData, tanggalTerima: e.target.value })
+                    }
+                    className={`${
+                        validationErrors.tanggalTerima ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+                {validationErrors.tanggalTerima && (
+                    <Typography className="text-red-500 text-sm mt-1">
+                        {validationErrors.tanggalTerima}
+                    </Typography>
+                )}
+            </div>
 
-                    <div>
-                        <Typography
-                            className={`text-sm mb-1 ${
-                                validationErrors.noBerkas ? "text-red-500" : "text-gray-600"
-                            }`}
-                        >
-                            No Berkas
-                        </Typography>
-                        <Input
-                            name="noBerkas"
-                            type="number"
-                            value={formData.noBerkas}
-                            onChange={(e) =>
-                                setFormData({ ...formData, noBerkas: e.target.value })
-                            }
-                            className={`${
-                                validationErrors.noBerkas ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.noBerkas && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.noBerkas}
-                            </Typography>
-                        )}
-                    </div>
-                    <div>
-                        <Typography
-                            className={`text-sm mb-1 ${
-                                validationErrors.tahunBerkas ? "text-red-500" : "text-gray-600"
-                            }`}
-                        >
-                            Tahun
-                        </Typography>
-                        <Select
-                            options={years.map((year) => ({ label: year, value: year }))}
-                            placeholder="Pilih Tahun"
-                            defaultValue={{ label: currentYear, value: currentYear }}
-                            onChange={(selected) =>
-                                setFormData({ ...formData, tahunBerkas: selected.value })
-                            }
-                            className={`${
-                                validationErrors.tahunBerkas ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                    </div>
-                    {/* <div>
-                        <Typography className={`text-sm mb-1 ${
-                                validationErrors.idKegiatan ? "text-red-500" : "text-gray-600"
-                            }`}>
-                            Kegiatan
-                        </Typography>
-                        <Select
-                            options={dropdownData.kegiatan.map((item) => ({
-                                label: item.namaKegiatan,
-                                value: item._id,
-                            }))}
-                            placeholder="Pilih Kegiatan"
-                            onChange={(selected) => {
-                                const item = dropdownData.kegiatan.find(
-                                    (k) => k._id === selected.value
-                                );
-                                setFormData({
-                                    ...formData,
-                                    idKegiatan: item._id,
-                                    namaSubsek: item.namaSubsek,
-                                    namaKegiatan: item.namaKegiatan,
-                                });
-                            }}
-                            className={`${
-                                validationErrors.idKegiatan ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.idKegiatan && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.idKegiatan}
-                            </Typography>
-                        )}
-                    </div> */}
+            {/* No Berkas */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.noBerkas ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    No Berkas
+                </Typography>
+                <Input
+                    name="noBerkas"
+                    type="number"
+                    value={formData.noBerkas}
+                    onChange={(e) =>
+                        setFormData({ ...formData, noBerkas: e.target.value })
+                    }
+                    className={`${
+                        validationErrors.noBerkas ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+                {validationErrors.noBerkas && (
+                    <Typography className="text-red-500 text-sm mt-1">
+                        {validationErrors.noBerkas}
+                    </Typography>
+                )}
+            </div>
 
-                    {/* Dropdown for namaSubsek */}
-                    <div>
-                        <Typography className={`text-sm mb-1 ${
-                                validationErrors.idKegiatan ? "text-red-500" : "text-gray-600"
-                            }`}>
-                            Subsek
-                        </Typography>
-                        <Select
-                        options={subsekOptions}
-                        placeholder="Pilih Subsek"
-                        onChange={(selected) => {
-                            setSelectedSubsek(selected);
-                        }}
-                        />
-                        {validationErrors.idKegiatan && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                Subsek wajib Dipilih
-                            </Typography>
-                        )}
-                    </div>
+            {/* Tahun */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.tahunBerkas ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    Tahun
+                </Typography>
+                <Select
+                    options={years.map((year) => ({ label: year, value: year }))}
+                    placeholder="Pilih Tahun"
+                    defaultValue={{ label: currentYear, value: currentYear }}
+                    onChange={(selected) =>
+                        setFormData({ ...formData, tahunBerkas: selected.value })
+                    }
+                    className={`${
+                        validationErrors.tahunBerkas ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+            </div>
 
-                    {/* Dropdown for namaKegiatan */}
-                    <div>
-                    <Typography className={`text-sm mb-1 ${
-                                validationErrors.idKegiatan ? "text-red-500" : "text-gray-600"
-                            }`}>
-                            Kegiatan
-                        </Typography>
-                        <Select
-                        options={kegiatanOptions}
-                        placeholder="Pilih Kegiatan"
-                        isDisabled={!selectedSubsek} // Disable if no subsek is selected
-                        onChange={(selected) => {
-                            setSelectedKegiatan(selected);
-                            const item = dropdownData.kegiatan.find(
-                                (k) => k._id === selected.value
-                            );
+            {/* Subseksi */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.namaSubsek ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    Subseksi
+                </Typography>
+                <Select
+                    options={subsekOptions}
+                    placeholder="Pilih Subseksi"
+                    value={selectedSubsek}
+                    onChange={(selected) => {
+                        setSelectedSubsek(selected);
+                        setFormData({ ...formData, namaSubsek: selected?.value || "" });
+                    }}
+                    className={`${
+                        validationErrors.namaSubsek ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+                {validationErrors.namaSubsek && (
+                    <Typography className="text-red-500 text-sm mt-1">
+                        Subseksi wajib dipilih.
+                    </Typography>
+                )}
+            </div>
+
+            {/* Kegiatan */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.idKegiatan ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    Kegiatan
+                </Typography>
+                <Select
+                    options={kegiatanOptions}
+                    placeholder="Pilih Kegiatan"
+                    value={selectedKegiatan}
+                    isDisabled={!selectedSubsek}
+                    onChange={(selected) => {
+                        setSelectedKegiatan(selected);
+                        const item = dropdownData.kegiatan.find(
+                            (k) => k._id === selected?.value
+                        );
+                        setFormData({
+                            ...formData,
+                            idKegiatan: item?._id || "",
+                            namaKegiatan: item?.namaKegiatan || "",
+                        });
+                    }}
+                    className={`${
+                        validationErrors.idKegiatan ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+                {validationErrors.idKegiatan && (
+                    <Typography className="text-red-500 text-sm mt-1">
+                        Kegiatan wajib dipilih.
+                    </Typography>
+                )}
+            </div>
+
+            {/* Pemohon */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.idPemohon ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    Pemohon
+                </Typography>
+                <Select
+                    options={dropdownData.pemohon}
+                    placeholder="Pilih Pemohon"
+                    onChange={(selected) => {
+                        if (selected.isNew) {
                             setFormData({
                                 ...formData,
-                                idKegiatan: item._id,
-                                namaSubsek: item.namaSubsek,
-                                namaKegiatan: item.namaKegiatan,
+                                pemohonBaru: true,
+                                idPemohon: "",
+                                namaPemohon: "",
                             });
-                        }}
-                        />
-                        {validationErrors.idKegiatan && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.idKegiatan}
-                            </Typography>
-                        )}
-                    </div>
+                        } else {
+                            setFormData({
+                                ...formData,
+                                pemohonBaru: false,
+                                idPemohon: selected?.value || "",
+                                namaPemohon: selected?.label || "",
+                            });
+                        }
+                    }}
+                />
+                {formData.pemohonBaru && (
+                    <Input
+                        label="Nama Pemohon Baru"
+                        value={formData.namaPemohon}
+                        onChange={(e) =>
+                            setFormData({
+                                ...formData,
+                                namaPemohon: e.target.value.toUpperCase(),
+                            })
+                        }
+                    />
+                )}
+                {validationErrors.idPemohon && (
+                    <Typography className="text-red-500 text-sm mt-1">
+                        Pemohon wajib dipilih.
+                    </Typography>
+                )}
+            </div>
 
-                    {/* Dropdown Pemohon dengan Auto-complete */}
-                    <div style={{ display: "grid", gap: "20px" }}>
-                        <div>
-                            <Typography className={`text-sm mb-1 ${
-                                validationErrors.idPemohon ? "text-red-500" : "text-gray-600"
-                            }`}>
-                                Pemohon
-                            </Typography>
-                            <Select
-                                options={dropdownData.pemohon}
-                                placeholder="Pilih atau Tambah Pemohon"
-                                onChange={(selected) => {
-                                    if (selected.isNew) {
-                                        setFormData({ ...formData, pemohonBaru: true, idPemohon: "", namaPemohon: "" });
-                                    } else {
-                                        setFormData({
-                                            ...formData,
-                                            pemohonBaru: false,
-                                            idPemohon: selected.value,
-                                            namaPemohon: selected.label,
-                                        });
-                                    }
-                                }}
-                                className={`${
-                                    validationErrors.idPemohon ? "border-red-500" : "border-gray-300"
-                                }`}
-                            />
-                            {validationErrors.idPemohon && (
-                                <Typography className="text-red-500 text-sm mt-1">
-                                    {validationErrors.idPemohon}
-                                </Typography>
-                            )}
-                        </div>
-                        {/* Input Nama Pemohon Baru */}
-                        {formData.pemohonBaru && (
-                            <Input
-                                label="Nama Pemohon Baru"
-                                value={formData.namaPemohon}
-                                onChange={(e) => setFormData({ ...formData, namaPemohon: e.target.value.toUpperCase() })}
-                            />
-                        )}
-                    </div>
+            {/* Jenis Hak */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.idJenisHak ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    Jenis Hak
+                </Typography>
+                <Select
+                    options={dropdownData.jenisHak.map((item) => ({
+                        label: item.JenisHak,
+                        value: item._id,
+                    }))}
+                    placeholder="Pilih Jenis Hak"
+                    onChange={(selected) => {
+                        const item = dropdownData.jenisHak.find(
+                            (jh) => jh._id === selected?.value
+                        );
+                        setFormData({
+                            ...formData,
+                            idJenisHak: item?._id || "",
+                            JenisHak: item?.JenisHak || "",
+                        });
+                    }}
+                />
+                {validationErrors.idJenisHak && (
+                    <Typography className="text-red-500 text-sm mt-1">
+                        Jenis Hak wajib dipilih.
+                    </Typography>
+                )}
+            </div>
 
-                    {/* Dropdown Jenis Hak */}
-                    <div>
-                        <Typography className={`text-sm mb-1 ${
-                                validationErrors.idJenisHak ? "text-red-500" : "text-gray-600"
-                            }`}>
-                            Jenis Hak
-                        </Typography>
-                        <Select
-                            options={dropdownData.jenisHak.map((item) => ({
-                                label: item.JenisHak,
-                                value: item._id,
-                            }))}
-                            placeholder="Pilih Jenis Hak"
-                            onChange={(selected) => {
-                                const item = dropdownData.jenisHak.find(
-                                    (jh) => jh._id === selected.value
-                                );
-                                setFormData({ ...formData, idJenisHak: item._id, JenisHak: item.JenisHak });
-                            }}
-                            className={`${
-                                validationErrors.idJenisHak ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.idJenisHak && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.idJenisHak}
-                            </Typography>
-                        )}
-                    </div>
-                    <div>
-                        <Typography
-                            className={`text-sm mb-1 ${
-                                validationErrors.noHak ? "text-red-500" : "text-gray-600"
-                            }`}
-                        >
-                            No Hak
-                        </Typography>
-                        <Input
-                            value={formData.noHak}
-                            type="number"
-                            onChange={(e) => setFormData({ ...formData, noHak: e.target.value })}
-                            className={`${
-                                validationErrors.noHak ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.noHak && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.noHak}
-                            </Typography>
-                        )}
-                    </div>
-                    {/* Dropdown Desa */}
-                    <div>
-                        <Typography className={`text-sm mb-1 ${
-                                validationErrors.idDesa ? "text-red-500" : "text-gray-600"
-                            }`}>
-                            Desa - Kecamatan
-                        </Typography>
-                        <Select
-                            options={dropdownData.desa.map((item) => ({
-                                label: item.namaDesa + " - " + item.namaKecamatan,
-                                value: item._id,
-                            }))}
-                            placeholder="Pilih Desa"
-                            onChange={(selected) => {
-                                const item = dropdownData.desa.find((d) => d._id === selected.value);
-                                setFormData({
-                                    ...formData,
-                                    idDesa: item._id,
-                                    namaDesa: item.namaDesa,
-                                    namaKecamatan: item.namaKecamatan,
-                                });
-                            }}
-                            className={`${
-                                validationErrors.idDesa ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.idDesa && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.idDesa}
-                            </Typography>
-                        )}
-                    </div>
+            {/* No Hak */}
+            <div>
+                <Typography
+                    className={`text-sm mb-1 ${
+                        validationErrors.noHak ? "text-red-500" : "text-gray-600"
+                    }`}
+                >
+                    No Hak
+                </Typography>
+                <Input
+                    value={formData.noHak}
+                    type="number"
+                    onChange={(e) => setFormData({ ...formData, noHak: e.target.value })}
+                    className={`${
+                        validationErrors.noHak ? "border-red-500" : "border-gray-300"
+                    }`}
+                />
+                {validationErrors.noHak && (
+                    <Typography className="text-red-500 text-sm mt-1">
+                        No Hak wajib diisi.
+                    </Typography>
+                )}
+            </div>
 
-                    <div>
-                        <Typography className={`text-sm mb-1 ${
-                                validationErrors.idPetugasSPS ? "text-red-500" : "text-gray-600"
-                            }`}>
-                            Petugas SPS
-                        </Typography>
-                        <Select
-                            options={dropdownData.petugasSPS.map((item) => ({
-                                label: item.namaPetugas,
-                                value: item._id,
-                            }))}
-                            placeholder="Pilih Petugas SPS"
-                            onChange={(selected) => {
-                                const item = dropdownData.petugasSPS.find(
-                                    (pu) => pu._id === selected.value
-                                );
-                                setFormData({ ...formData, idPetugasSPS: item._id, namaPetugasSPS: item.namaPetugas });
-                            }}
-                            className={`${
-                                validationErrors.idPetugasSPS ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.idPetugasSPS && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.idPetugasSPS}
-                            </Typography>
-                        )}
-                    </div>
-
-                    {/* <Input
-                        label="Nama Petugas SPS"
-                        value={formData.namaPetugasSPS}
-                        onChange={(e) => setFormData({ ...formData, namaPetugasSPS: e.target.value })}
-                    /> */}
-                    <div>
-                        <Typography
-                            className={`text-sm mb-1 ${
-                                validationErrors.tanggalSPS ? "text-red-500" : "text-gray-600"
-                            }`}
-                        >
-                            Tanggal SPS
-                        </Typography>
-                        <Input
-                            type="date"
-                            value={formData.tanggalSPS}
-                            onChange={(e) => setFormData({ ...formData, tanggalSPS: e.target.value })}
-                            className={`${
-                                validationErrors.tanggalSPS ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.tanggalSPS && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.tanggalSPS}
-                            </Typography>
-                        )}
-                    </div>
-                    {/* Dropdown Petugas Ukur */}
-                    <div>
-                        <Typography className={`text-sm mb-1 ${
-                                validationErrors.idPetugasUkur ? "text-red-500" : "text-gray-600"
-                            }`}
-                        >
-                            Petugas Ukur
-                        </Typography>
-                        <Select
-                            options={dropdownData.petugasUkur.map((item) => ({
-                                label: item.nama,
-                                value: item._id,
-                            }))}
-                            placeholder="Pilih Petugas Ukur"
-                            onChange={(selected) => {
-                                const item = dropdownData.petugasUkur.find(
-                                    (pu) => pu._id === selected.value
-                                );
-                                setFormData({ ...formData, idPetugasUkur: item._id, namaPetugasUkur: item.nama });
-                            }}
-                            className={`${
-                                validationErrors.petugasUkur ? "border-red-500" : "border-gray-300"
-                            }`}
-                        />
-                        {validationErrors.idPetugasUkur && (
-                            <Typography className="text-red-500 text-sm mt-1">
-                                {validationErrors.idPetugasUkur}
-                            </Typography>
-                        )}
-                    </div>
-
-                    <div>
-                        <Typography className="text-sm text-gray-600 mb-1">
-                            Tambahkan PIC 
-                        </Typography>
-                        <div className="flex gap-2">
-                            <Input
-                                label="Nama PIC"
-                                value={newPIC.namaPIC}
-                                onChange={(e) =>
-                                    setNewPIC({ ...newPIC, namaPIC: e.target.value })
-                                }
-                            />
-                            <Input
-                                label="Kontak PIC"
-                                value={newPIC.kontakPIC}
-                                onChange={(e) =>
-                                    setNewPIC({ ...newPIC, kontakPIC: e.target.value })
-                                }
-                            />
-                            <Button
-                                variant="gradient"
-                                color="blue"
-                                onClick={handleInsertPIC}
-                            >
-                                Tambah PIC
-                            </Button>
-                        </div>
-                        <ul className="mt-2">
-                            {formData.PIC.map((pic, index) => (
-                                <li
-                                    key={index}
-                                    className="flex items-center justify-between mb-2"
-                                >
-                                    <Typography>
-                                        {pic.namaPIC} - {pic.kontakPIC}
-                                    </Typography>
-                                    <Button
-                                        variant="text"
-                                        color="red"
-                                        onClick={() => handleRemovePIC(index)}
-                                    >
-                                        Hapus
-                                    </Button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+            {/* Tambahkan PIC */}
+            <div className="col-span-full">
+                <Typography className="text-sm text-gray-600 mb-1">Tambahkan PIC</Typography>
+                <div className="flex gap-2 flex-wrap">
+                    <Input
+                        label="Nama PIC"
+                        value={newPIC.namaPIC}
+                        onChange={(e) =>
+                            setNewPIC({ ...newPIC, namaPIC: e.target.value })
+                        }
+                    />
+                    <Input
+                        label="Kontak PIC"
+                        value={newPIC.kontakPIC}
+                        onChange={(e) =>
+                            setNewPIC({ ...newPIC, kontakPIC: e.target.value })
+                        }
+                    />
+                    <Button variant="gradient" color="blue" onClick={handleInsertPIC}>
+                        Tambah PIC
+                    </Button>
                 </div>
-            </DialogBody>
-            <DialogFooter>
-                <Button
-                    variant="text"
-                    color="red"
-                    onClick={onClose}
-                    className="mr-2"
-                >
-                    Batal
-                </Button>
-                <Button
-                    variant="gradient"
-                    color="blue"
-                    onClick={handleInsert}
-                    disabled={loading}
-                >
-                    {loading ? "Loading..." : "Tambah"}
-                </Button>
-            </DialogFooter>
-        </Dialog>
+            </div>
+        </div>
+    </DialogBody>
+    <DialogFooter>
+        <Button
+            variant="text"
+            color="red"
+            onClick={onClose}
+            className="mr-2"
+        >
+            Batal
+        </Button>
+        <Button
+            variant="gradient"
+            color="blue"
+            onClick={handleInsert}
+            disabled={loading}
+        >
+            {loading ? "Loading..." : "Tambah"}
+        </Button>
+    </DialogFooter>
+</Dialog>
+
+
     );
 };
 
