@@ -95,33 +95,35 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
     if (!isOpen) return null;
 
     return (
-        <Dialog open={isOpen} handler={onClose}>
+        <Dialog open={isOpen} handler={onClose} className="w-full max-w-4xl">
             <DialogHeader className="text-xl font-bold">Filter Data</DialogHeader>
-            <DialogBody divider className="overflow-y-auto max-h-[70vh]">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <DialogBody divider className="overflow-y-auto max-h-[70vh] px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Tanggal Terima Start */}
                     <div>
                         <Typography className="text-sm text-gray-600 mb-1">
-                            Tanggal Terima (Start)
+                            Tanggal Terima (Mulai)
                         </Typography>
                         <Input
                             type="date"
                             name="tanggalTerimaStart"
                             value={filters.tanggalTerimaStart}
                             onChange={handleInputChange}
+                            className="w-full"
                         />
                     </div>
 
                     {/* Tanggal Terima End */}
                     <div>
                         <Typography className="text-sm text-gray-600 mb-1">
-                            Tanggal Terima (End)
+                            Tanggal Terima (Selesai)
                         </Typography>
                         <Input
                             type="date"
                             name="tanggalTerimaEnd"
                             value={filters.tanggalTerimaEnd}
                             onChange={handleInputChange}
+                            className="w-full"
                         />
                     </div>
 
@@ -138,6 +140,17 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                                 (option) => option.value === filters.kegiatan
                             )}
                             onChange={(selected) => handleSelectChange("kegiatan", selected)}
+                            styles={{
+                                menu: (base) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                }),
+                                menuList: (base) => ({
+                                    ...base,
+                                    maxHeight: "200px",
+                                    overflowY: "auto",
+                                }),
+                            }}
                         />
                     </div>
 
@@ -154,6 +167,17 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                                 (option) => option.value === filters.jenisHak
                             )}
                             onChange={(selected) => handleSelectChange("jenisHak", selected)}
+                            styles={{
+                                menu: (base) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                }),
+                                menuList: (base) => ({
+                                    ...base,
+                                    maxHeight: "200px",
+                                    overflowY: "auto",
+                                }),
+                            }}
                         />
                     </div>
 
@@ -170,6 +194,17 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                                 (option) => option.value === filters.desa
                             )}
                             onChange={(selected) => handleSelectChange("desa", selected)}
+                            styles={{
+                                menu: (base) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                }),
+                                menuList: (base) => ({
+                                    ...base,
+                                    maxHeight: "200px",
+                                    overflowY: "auto",
+                                }),
+                            }}
                         />
                     </div>
 
@@ -186,37 +221,47 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                                 (option) => option.value === filters.petugasUkur
                             )}
                             onChange={(selected) => handleSelectChange("petugasUkur", selected)}
+                            styles={{
+                                menu: (base) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                }),
+                                menuList: (base) => ({
+                                    ...base,
+                                    maxHeight: "200px",
+                                    overflowY: "auto",
+                                }),
+                            }}
                         />
                     </div>
                 </div>
             </DialogBody>
             <DialogFooter className="flex flex-wrap gap-4 justify-center sm:justify-end p-4">
-    <Button
-        variant="text"
-        color="red"
-        onClick={handleResetFilter}
-        className="w-full sm:w-auto"
-    >
-        Reset
-    </Button>
-    <Button
-        variant="text"
-        color="red"
-        onClick={onClose}
-        className="w-full sm:w-auto"
-    >
-        Batal
-    </Button>
-    <Button
-        variant="gradient"
-        color="blue"
-        onClick={handleApplyFilter}
-        className="w-full sm:w-auto"
-    >
-        Terapkan Filter
-    </Button>
-</DialogFooter>
-
+                <Button
+                    variant="text"
+                    color="red"
+                    onClick={handleResetFilter}
+                    className="w-full sm:w-auto"
+                >
+                    Reset
+                </Button>
+                <Button
+                    variant="text"
+                    color="red"
+                    onClick={onClose}
+                    className="w-full sm:w-auto"
+                >
+                    Batal
+                </Button>
+                <Button
+                    variant="gradient"
+                    color="blue"
+                    onClick={handleApplyFilter}
+                    className="w-full sm:w-auto"
+                >
+                    Terapkan Filter
+                </Button>
+            </DialogFooter>
         </Dialog>
     );
 };

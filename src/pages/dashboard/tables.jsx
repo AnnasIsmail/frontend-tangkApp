@@ -60,7 +60,7 @@ export function Tables() {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
-
+  
       try {
         const response = await axios.post(
           "berkas",
@@ -72,10 +72,16 @@ export function Tables() {
             },
           }
         );
-
+  
         if (response.status === 200 && Array.isArray(response.data)) {
           const processedData = processBerkasData(response.data);
-          setBerkasData(processedData);
+          
+          // Sort data berdasarkan `dateIn` secara descending (latest first)
+          const sortedData = processedData.sort((a, b) => 
+            new Date(b.dateIn) - new Date(a.dateIn) // Ubah ke `a.dateIn - b.dateIn` untuk ascending
+          );
+  
+          setBerkasData(sortedData);
         } else {
           throw new Error("Data tidak valid atau kosong.");
         }
@@ -85,12 +91,13 @@ export function Tables() {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [roleNow, token, refresh]);
+  
 
   const renderActionButtons = (berkas) => {
-    if (roleNow === "Admin") {
+    if (roleNow === "Admin" || roleNow === "PelaksanaEntri") {
       return (
         <>
           <IconButton
