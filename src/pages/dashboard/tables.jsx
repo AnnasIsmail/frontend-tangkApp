@@ -143,7 +143,7 @@ export function Tables() {
     try {
       let notes;
       if(status === "Terhenti"){
-        notes = prompt("Masukkan deskripsi kendala:");
+        notes = prompt("Masukkan catatan (opsional): ");
         if (!notes) return;
       }
       const response = await axios.post(
