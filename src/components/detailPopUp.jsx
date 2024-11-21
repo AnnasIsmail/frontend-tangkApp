@@ -3,11 +3,10 @@ import {
   Dialog,
   DialogHeader,
   DialogBody,
-  DialogFooter,
   Typography,
+  IconButton,
+  DialogFooter,
   Button,
-} from "@material-tailwind/react";
-import {
   Timeline,
   TimelineItem,
   TimelineConnector,
@@ -15,8 +14,13 @@ import {
   TimelineIcon,
   TimelineBody,
 } from "@material-tailwind/react";
+import { PencilIcon, TrashIcon, PlusIcon, EyeIcon, FunnelIcon} from "@heroicons/react/24/outline"; // Import icons
 
-const DetailModal = ({ berkas, onClose }) => {
+import { useMaterialTailwindController } from "@/context";
+
+const DetailModal = ({ berkas, onClose, handleSelesai, setSelectedBerkas, setShowUpdatePopup, handleDeleteBerkas, handleTerhenti }) => {
+  const [controller] = useMaterialTailwindController();
+  const { roleNow, token, user } = controller;
   const renderField = (label, value) => (
     <div className="mb-4">
       <Typography variant="h6" className="font-semibold text-gray-900">
@@ -71,7 +75,25 @@ const DetailModal = ({ berkas, onClose }) => {
 
   return (
     <Dialog open={true} handler={onClose}>
-      <DialogHeader className="text-2xl font-bold border-b pb-2">Detail Berkas</DialogHeader>
+      <DialogHeader className="text-2xl font-bold border-b pb-2 relative">
+        Detail Berkas
+        {/* Tombol Tutup */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 p-1 text-gray-600 hover:text-gray-900"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </DialogHeader>
       <DialogBody divider className="overflow-y-auto max-h-[70vh]">
         {/* Informasi Berkas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -93,7 +115,7 @@ const DetailModal = ({ berkas, onClose }) => {
           </div>
 
           {/* Kolom Kanan */}
-          <div className="pl-4">
+          <div>
             {renderField("Desa dan Kecamatan", `${berkas.namaDesa} - ${berkas.namaKecamatan}`)}
             {renderField("Tanggal Entri", new Date(berkas.dateIn).toLocaleDateString())}
             {renderField("Status Perjalanan", berkas.status[berkas.status.length - 1]?.name)}
@@ -118,10 +140,50 @@ const DetailModal = ({ berkas, onClose }) => {
           {renderTimeline()}
         </div>
       </DialogBody>
-      <DialogFooter>
-        <Button variant="text" color="red" onClick={onClose} className="mr-2">
-          Tutup
+      <DialogFooter className="show-on-mobile">
+        {(roleNow === "Admin" || roleNow === "PelaksanaEntri")?
+        <>
+        <IconButton
+          variant="text"
+          color="blue"
+          onClick={() => {
+            onClose();
+            setSelectedBerkas(berkas); // Set berkas yang dipilih
+            setShowUpdatePopup(true); // Tampilkan popup
+          }}
+        >
+          <PencilIcon className="h-5 w-5" />
+        </IconButton>
+        <IconButton
+          variant="text"
+          color="red"
+          onClick={() => handleDeleteBerkas(berkas._id)} // Panggil fungsi hapus
+        >
+          <TrashIcon className="h-5 w-5" />
+        </IconButton>
+      </>:
+      <>
+      <Button
+        variant="gradient"
+        color="green"
+        size="sm"
+        onClick={() => handleSelesai(berkas._id, berkas.status[berkas.status?.length - 1]?.statusDetail[berkas.status[berkas.status?.length - 1]?.statusDetail?.length - 1]?.nama, berkas)}
+      >
+        Selesai
+      </Button>
+      {
+        (berkas.status[berkas.status?.length - 1]?.statusDetail[berkas.status[berkas.status?.length - 1]?.statusDetail?.length - 1]?.nama !== "Terhenti") &&
+        <Button
+          variant="gradient"
+          color="red"
+          size="sm"
+          onClick={() => handleTerhenti(berkas._id)} // Panggil handleTerhenti
+        >
+          Terhenti
         </Button>
+      }
+    </>
+        }
       </DialogFooter>
     </Dialog>
   );

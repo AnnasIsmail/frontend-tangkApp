@@ -338,7 +338,7 @@ const PopUpUpdateBerkas = ({ data, onClose, onUpdateSuccess }) => {
             <Select
                 className="w-full"
                 options={dropdownData.petugasUkur.map((item) => ({
-                    label: item.namaPetugas,
+                    label: item.nama,
                     value: item._id,
                 }))}
                 value={{
@@ -396,9 +396,6 @@ const PopUpUpdateBerkas = ({ data, onClose, onUpdateSuccess }) => {
         </div>
     </div>
 </DialogBody>
-
-
-
             <DialogFooter>
                 <Button
                     variant="text"
