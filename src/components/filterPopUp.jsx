@@ -96,9 +96,9 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
 
     return (
         <Dialog open={isOpen} handler={onClose}>
-            <DialogHeader>Filter Data</DialogHeader>
-            <DialogBody divider className="overflow-y-auto max-h-[80vh]">
-                <div className="grid gap-4">
+            <DialogHeader className="text-xl font-bold">Filter Data</DialogHeader>
+            <DialogBody divider className="overflow-y-auto max-h-[70vh]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Tanggal Terima Start */}
                     <div>
                         <Typography className="text-sm text-gray-600 mb-1">
@@ -190,17 +190,33 @@ const FilterPopUp = ({ isOpen, onClose, onApplyFilter }) => {
                     </div>
                 </div>
             </DialogBody>
-            <DialogFooter>
-                <Button variant="text" color="red" onClick={handleResetFilter} className="mr-2">
-                    Reset
-                </Button>
-                <Button variant="text" color="red" onClick={onClose} className="mr-2">
-                    Batal
-                </Button>
-                <Button variant="gradient" color="blue" onClick={handleApplyFilter}>
-                    Terapkan Filter
-                </Button>
-            </DialogFooter>
+            <DialogFooter className="flex flex-wrap gap-4 justify-center sm:justify-end p-4">
+    <Button
+        variant="text"
+        color="red"
+        onClick={handleResetFilter}
+        className="w-full sm:w-auto"
+    >
+        Reset
+    </Button>
+    <Button
+        variant="text"
+        color="red"
+        onClick={onClose}
+        className="w-full sm:w-auto"
+    >
+        Batal
+    </Button>
+    <Button
+        variant="gradient"
+        color="blue"
+        onClick={handleApplyFilter}
+        className="w-full sm:w-auto"
+    >
+        Terapkan Filter
+    </Button>
+</DialogFooter>
+
         </Dialog>
     );
 };

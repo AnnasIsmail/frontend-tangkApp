@@ -285,7 +285,7 @@ const PopUpUpdateBerkas = ({ data, onClose, onUpdateSuccess }) => {
 
             {/* Desa */}
             <div>
-                <Typography className="text-sm text-gray-600 mb-1">Desa</Typography>
+                <Typography className="text-sm text-gray-600 mb-1">Desa - Kecamatan</Typography>
                 <Select
                     options={dropdownData.desa.map((item) => ({
                         label: item.namaDesa + " - " + item.namaKecamatan,
