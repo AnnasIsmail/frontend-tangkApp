@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Card,
@@ -16,11 +16,11 @@ import {
 import {
   EllipsisVerticalIcon,
   ArrowUpIcon,
+  DocumentIcon
 } from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
 import { StatisticsChart } from "@/widgets/charts";
 import {
-  statisticsCardsData,
   statisticsChartsData,
   projectsTableData,
   ordersOverviewData,
@@ -28,35 +28,78 @@ import {
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { useMaterialTailwindController } from "../../context";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "@/api/apiTangkApp";
 
 export function Home() {
   const [controller] = useMaterialTailwindController();
-  const { isLoggedIn, user } = controller;
+  const { isLoggedIn, user, roleNow } = controller;
   const navigate = useNavigate();
 
   if (!isLoggedIn) {
     navigate("/auth/sign-in");
   }
 
+  const [statisticsCardsData, setStatisticsCardsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Mengambil data dari API
+    axios
+      .post("dashboard", {role: roleNow})
+      .then((response) => {
+        if (response.data.success) {
+          // Mendapatkan data dari API
+          const { berjalan, selesai, terhenti } = response.data.data.berkas;
+
+          // Memperbarui statisticsCardsData dengan data dari API
+          const updatedData = [
+            {
+              title: "Berkas Berjalan",
+              value: berjalan,
+              icon: DocumentIcon, // Sesuaikan dengan nama ikon
+            },
+            {
+              title: "Berkas Selesai",
+              value: selesai,
+              icon: DocumentIcon, // Sesuaikan dengan nama ikon
+            },
+            {
+              title: "Berkas Terhenti",
+              value: terhenti,
+              icon: DocumentIcon, // Sesuaikan dengan nama ikon
+            },
+          ];
+
+          setStatisticsCardsData(updatedData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [roleNow]);
+
   return (
     <div className="mt-12">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-3 xl:grid-cols-3">
-        {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
-          <StatisticsCard
-            key={title}
-            {...rest}
-            title={title}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-white",
-            })}
-            // footer={
-            //   <Typography className="font-normal text-blue-gray-600">
-            //     <strong className={footer.color}>{footer.value}</strong>
-            //     &nbsp;{footer.label}
-            //   </Typography>
-            // }
-          />
-        ))}
+        {loading ? (
+          <div>Loading...</div>
+        ) : (
+          statisticsCardsData.map(({ icon, title, footer, value, ...rest }) => (
+            <StatisticsCard
+              key={title}
+              {...rest}
+              title={title}
+              footer={footer}
+              value={value}
+              icon={React.createElement(icon, {
+                className: "w-6 h-6 text-white",
+              })}
+            />
+          ))
+        )}
       </div>
       <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {statisticsChartsData.map((props) => (
