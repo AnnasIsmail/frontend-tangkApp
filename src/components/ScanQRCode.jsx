@@ -25,7 +25,7 @@ const ScanQRCode = () => {
           style={{ width: '100%' }}
           onScan={handleScan}
           onError={handleError}
-          facingMode="environment" // Menggunakan kamera belakang
+          facingMode={{ exact: "environment" }}  // Pastikan menggunakan objek seperti ini
         />
       ) : (
         <div>
