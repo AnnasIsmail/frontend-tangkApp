@@ -20,6 +20,7 @@ const ScanQRCode = () => {
     <div>
       <h1>Scan QR Code</h1>
       {scanning ? (
+        <>
         <QrScanner
 delay={300}
 constraints={{
@@ -29,7 +30,14 @@ style={{ width: '100%' }}
 onError={handleError}
 onScan={handleScan}
 />
-
+        <QrScanner
+        delay={300}
+        style={{ width: '100%' }}
+        onScan={handleScan}
+        onError={handleError}
+        facingMode="environment" // Menggunakan kamera belakang
+      />
+        </>
       ) : (
         <div>
           <h2>Scan Berhasil!</h2>
