@@ -12,11 +12,12 @@ import {
   Avatar,
   Tooltip,
   Progress,
+  Alert,
 } from "@material-tailwind/react";
 import {
   EllipsisVerticalIcon,
   ArrowUpIcon,
-  DocumentIcon
+  DocumentIcon,
 } from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
 import { StatisticsChart } from "@/widgets/charts";
@@ -29,47 +30,50 @@ import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { useMaterialTailwindController } from "../../context";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "@/api/apiTangkApp";
+import GenerateQRCode from "@/components/GenerateQRCode";
+import ScanQRCode from "@/components/ScanQRCode";
 
 export function Home() {
   const [controller] = useMaterialTailwindController();
   const { isLoggedIn, user, roleNow } = controller;
   const navigate = useNavigate();
 
+  // Redirect ke halaman login jika tidak login
   if (!isLoggedIn) {
     navigate("/auth/sign-in");
   }
 
+  // State untuk menyimpan data statistik dan loading
   const [statisticsCardsData, setStatisticsCardsData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [countAlert, setCountAlert] = useState(0);
 
   useEffect(() => {
-    // Mengambil data dari API
+    // Fetch data API untuk statistik
     axios
-      .post("dashboard", {role: roleNow})
+      .post("dashboard", { role: roleNow })
       .then((response) => {
         if (response.data.success) {
-          // Mendapatkan data dari API
           const { berjalan, selesai, terhenti } = response.data.data.berkas;
-
-          // Memperbarui statisticsCardsData dengan data dari API
+          const { alertSystem } = response.data.data;
           const updatedData = [
             {
               title: "Berkas Berjalan",
               value: berjalan,
-              icon: DocumentIcon, // Sesuaikan dengan nama ikon
+              icon: DocumentIcon,
             },
             {
               title: "Berkas Terhenti",
               value: terhenti,
-              icon: DocumentIcon, // Sesuaikan dengan nama ikon
+              icon: DocumentIcon,
             },
             {
               title: "Berkas Selesai",
               value: selesai,
-              icon: DocumentIcon, // Sesuaikan dengan nama ikon
-            },
+              icon: DocumentIcon,
+            }
           ];
-
+          setCountAlert(alertSystem);
           setStatisticsCardsData(updatedData);
         }
       })
@@ -82,7 +86,21 @@ export function Home() {
   }, [roleNow]);
 
   return (
-    <div className="mt-12">
+    <div className="mt-2">
+      {/* Statistik Cards */}
+      <div className="mb-12">
+        {(countAlert === 0)?
+          <Alert color="blue">An info alert for showing message.</Alert>
+        :
+          <Alert color="red">An info alert for showing message.</Alert>
+        }
+        <div>
+          <GenerateQRCode />
+        </div>
+        <div>
+          <ScanQRCode />
+        </div>
+      </div>
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-3 xl:grid-cols-3">
         {loading ? (
           <div>Loading...</div>
@@ -101,6 +119,7 @@ export function Home() {
           ))
         )}
       </div>
+      {/* Charts Section */}
       <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {statisticsChartsData.map((props) => (
           <StatisticsChart
@@ -111,13 +130,18 @@ export function Home() {
                 variant="small"
                 className="flex items-center font-normal text-blue-gray-600"
               >
-                <ClockIcon strokeWidth={2} className="h-4 w-4 text-blue-gray-400" />
+                <ClockIcon
+                  strokeWidth={2}
+                  className="h-4 w-4 text-blue-gray-400"
+                />
                 &nbsp;{props.footer}
               </Typography>
             }
           />
         ))}
       </div>
+
+      {/* Projects and Orders Overview */}
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
           <CardHeader
@@ -134,7 +158,10 @@ export function Home() {
                 variant="small"
                 className="flex items-center gap-1 font-normal text-blue-gray-600"
               >
-                <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
+                <CheckCircleIcon
+                  strokeWidth={3}
+                  className="h-4 w-4 text-blue-gray-200"
+                />
                 <strong>30 done</strong> this month
               </Typography>
             </div>
@@ -159,21 +186,19 @@ export function Home() {
             <table className="w-full min-w-[640px] table-auto">
               <thead>
                 <tr>
-                  {["companies", "members", "budget", "completion"].map(
-                    (el) => (
-                      <th
-                        key={el}
-                        className="border-b border-blue-gray-50 py-3 px-6 text-left"
+                  {["companies", "members", "budget", "completion"].map((el) => (
+                    <th
+                      key={el}
+                      className="border-b border-blue-gray-50 py-3 px-6 text-left"
+                    >
+                      <Typography
+                        variant="small"
+                        className="text-[11px] font-medium uppercase text-blue-gray-400"
                       >
-                        <Typography
-                          variant="small"
-                          className="text-[11px] font-medium uppercase text-blue-gray-400"
-                        >
-                          {el}
-                        </Typography>
-                      </th>
-                    )
-                  )}
+                        {el}
+                      </Typography>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
