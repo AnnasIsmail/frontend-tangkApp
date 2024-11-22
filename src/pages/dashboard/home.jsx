@@ -59,13 +59,13 @@ export function Home() {
               icon: DocumentIcon, // Sesuaikan dengan nama ikon
             },
             {
-              title: "Berkas Selesai",
-              value: selesai,
+              title: "Berkas Terhenti",
+              value: terhenti,
               icon: DocumentIcon, // Sesuaikan dengan nama ikon
             },
             {
-              title: "Berkas Terhenti",
-              value: terhenti,
+              title: "Berkas Selesai",
+              value: selesai,
               icon: DocumentIcon, // Sesuaikan dengan nama ikon
             },
           ];

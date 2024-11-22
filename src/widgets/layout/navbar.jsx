@@ -50,7 +50,7 @@ export function Navbar({ brandName, routes, action }) {
             variant="small"
             className="mr-4 ml-2 cursor-pointer py-1.5 font-bold"
           >
-            {brandName}
+            {z}
           </Typography>
         </Link>
         <div className="hidden lg:block">{navList}</div>
@@ -86,11 +86,11 @@ Navbar.defaultProps = {
   brandName: "TangkApp",
   action: (
     <a
-      href="https://www.creative-tim.com/product/material-tailwind-dashboard-react"
+      href=""
       target="_blank"
     >
       <Button variant="gradient" size="sm" fullWidth>
-        free download
+        test
       </Button>
     </a>
   ),
