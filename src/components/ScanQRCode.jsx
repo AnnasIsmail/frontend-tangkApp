@@ -21,13 +21,14 @@ const ScanQRCode = () => {
       <h1>Scan QR Code</h1>
       {scanning ? (
         <QrScanner
-  delay={300}
-  style={{ width: '100%' }}
-  onScan={handleScan}
-  onError={handleError}
-  constraints={{
-    facingMode: { exact: 'environment' }, // Gunakan objek untuk lebih eksplisit
-  }}
+ref={qrRef}
+delay={300}
+constraints={{
+    facingMode: 'environment'
+}}
+style={{ width: '100%' }}
+onError={handleErrorWebCam}
+onScan={handleScanWebCam}
 />
 
       ) : (
