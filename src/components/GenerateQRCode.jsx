@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import QRCode from 'react-qr-code'; // Default import
 
 const GenerateQRCode = () => {
-  const [text, setText] = useState('https://example.com'); // Data yang ingin dikodekan
+  const [text, setText] = useState('67404f6f92507439fe9df6bc'); // Data yang ingin dikodekan
 
   return (
     <div>
