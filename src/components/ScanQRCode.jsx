@@ -1,26 +1,38 @@
-import React from 'react';
-import QrScanner from 'react-qr-scanner';
+import React, { useState } from 'react';
+import QrScanner from 'react-qr-scanner';  // Import QR scanner
 
 const ScanQRCode = () => {
+  const [result, setResult] = useState('');
+  const [scanning, setScanning] = useState(true); // Menyimpan status scanning
+
   const handleScan = (data) => {
     if (data) {
-      console.log("QR Code data:", data); // Menampilkan hasil QR Code yang dibaca
+      setResult(data.text); // Set hasil QR Code
+      setScanning(false); // Hentikan scanning setelah berhasil
     }
   };
 
   const handleError = (err) => {
-    console.error("Error:", err); // Menangani error kamera
+    console.error(err); // Menangani error jika ada
   };
 
   return (
     <div>
       <h1>Scan QR Code</h1>
-      <QrScanner
-        delay={300} // Waktu delay pembacaan kamera
-        style={{ width: '100%' }}
-        onError={handleError}
-        onScan={handleScan}
-      />
+      {scanning ? (
+        <QrScanner
+          delay={300}
+          style={{ width: '100%' }}
+          onScan={handleScan}
+          onError={handleError}
+          facingMode="environment" // Menggunakan kamera belakang
+        />
+      ) : (
+        <div>
+          <h2>Scan Berhasil!</h2>
+          <p>Hasil QR: {result}</p>
+        </div>
+      )}
     </div>
   );
 };
