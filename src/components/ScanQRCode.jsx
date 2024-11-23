@@ -32,7 +32,11 @@ const ScanQRCode = () => {
             style={{ width: '100%' }}
             onScan={handleScan}
             onError={handleError}
-            facingMode={camera} // Mengatur mode kamera
+            constraints={{
+              video: {
+                facingMode: camera, // Atur kamera sesuai state
+              },
+            }}
           />
           <button onClick={toggleCamera} style={{ marginTop: '10px' }}>
             {camera === 'environment' ? 'Gunakan Kamera Depan' : 'Gunakan Kamera Belakang'}
