@@ -94,12 +94,12 @@ export function Home() {
         :
           <Alert color="red">An info alert for showing message.</Alert>
         }
-        <div>
+        {/* <div>
           <GenerateQRCode />
         </div>
         <div>
           <ScanQRCode />
-        </div>
+        </div> */}
       </div>
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-3 xl:grid-cols-3">
         {loading ? (

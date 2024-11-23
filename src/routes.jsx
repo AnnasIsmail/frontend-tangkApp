@@ -5,9 +5,11 @@ import {
   InformationCircleIcon,
   ServerStackIcon,
   RectangleStackIcon,
+  CameraIcon
 } from "@heroicons/react/24/solid";
 import { Home, Tables, PetugasUkur, PetugasSPS, Users, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
+import ScanQR from "./pages/dashboard/scanQR";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -22,6 +24,12 @@ export const routes = [
         name: "dashboard",
         path: "/home",
         element: <Home />,
+      },
+      {
+        icon: <CameraIcon {...icon} />,
+        name: "Scan QR",
+        path: "/scanQR",
+        element: <ScanQR />,
       },
       {
         icon: <TableCellsIcon {...icon} />,
