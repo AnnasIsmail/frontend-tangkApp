@@ -34,6 +34,15 @@ const ScanQRCode = () => {
             style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}
             onScan={handleScan}
             onError={handleError}
+            onResult={(result, error) => {
+                if (!!result) {
+                    handleScan(result);
+                }
+      
+                if (!!error) {
+                    handleError(error);
+                }
+              }}
             constraints={{
               video: {
                 facingMode: camera, // Default kamera belakang
