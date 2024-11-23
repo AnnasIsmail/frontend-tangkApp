@@ -99,9 +99,9 @@ export function Home() {
       {/* Statistik Cards */}
       <div className="mb-12">
         {countAlert === 0 ? (
-          <Alert color="blue">An info alert for showing message.</Alert>
+          <></>
         ) : (
-          <Alert color="red">An info alert for showing message.</Alert>
+          <Alert color="red">{countAlert} Berkas Belum Diproses.</Alert>
         )}
       </div>
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-3 xl:grid-cols-3">
