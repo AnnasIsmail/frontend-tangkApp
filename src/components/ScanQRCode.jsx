@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import QrScanner from 'react-qr-scanner';  // Import QR scanner
+import QrReader from 'react-qr-scanner';  // Import QR scanner
 
 const ScanQRCode = () => {
   const [result, setResult] = useState('');
@@ -36,6 +37,19 @@ onScan={handleScan}
         onScan={handleScan}
         onError={handleError}
         facingMode="environment" // Menggunakan kamera belakang
+      />
+        <QrReader
+        constraints={{
+          facingMode: "environment",
+        }}
+        key="environment"
+        onResult={(result, error) => {
+          if (!!result) {
+            setData(result?.text);
+          }
+        }}
+        style={{
+           width: "100%"}}
       />
         </>
       ) : (
