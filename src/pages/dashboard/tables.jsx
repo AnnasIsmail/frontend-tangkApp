@@ -381,135 +381,99 @@ export function Tables() {
                                         }`
 
                                         return (
-                                            <tr key={berkas._id}>
-                                                <td className={className}>
-                                                    <Typography className="text-xs font-semibold text-blue-gray-600">
-                                                        {berkas.noBerkas}/
-                                                        {berkas.tahunBerkas}
-                                                    </Typography>
-                                                </td>
-                                                <td className={className}>
-                                                    <Typography className="text-xs font-semibold text-blue-gray-600">
-                                                        {new Date(
-                                                            berkas.tanggalTerima
-                                                        ).toLocaleDateString()}
-                                                    </Typography>
-                                                </td>
-                                                <td className={className}>
-                                                    <Typography className="text-xs font-semibold text-blue-gray-600">
-                                                        {berkas.namaKegiatan}
-                                                    </Typography>
-                                                </td>
-                                                <td className={className}>
-                                                    <Typography className="text-xs font-semibold text-blue-gray-600">
-                                                        {berkas.namaPemohon}
-                                                    </Typography>
-                                                </td>
-                                                <td className={className}>
-                                                    <Typography className="text-xs font-semibold text-blue-gray-600">
-                                                        {berkas.namaDesa}
-                                                    </Typography>
-                                                </td>
-                                                {/* <td className={className}>
-                          <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {berkas.status[berkas.status?.length - 1].name}
-                          </Typography>
-                        </td> */}
-                                                <td className={className}>
-                                                    <Typography className="text-xs font-semibold text-blue-gray-600">
-                                                        {berkas.status?.[
-                                                            berkas.status
-                                                                .length - 1
-                                                        ]?.statusDetail?.[
-                                                            berkas.status[
-                                                                berkas.status
-                                                                    .length - 1
-                                                            ]?.statusDetail
-                                                                ?.length - 1
-                                                        ]?.nama ? (
-                                                            <span
-                                                                className={`px-2 py-1 text-xs font-medium rounded ${
-                                                                    berkas
-                                                                        .status[
-                                                                        berkas
-                                                                            .status
-                                                                            .length -
-                                                                            1
-                                                                    ]
-                                                                        ?.statusDetail?.[
-                                                                        berkas
-                                                                            .status[
-                                                                            berkas
-                                                                                .status
-                                                                                .length -
-                                                                                1
-                                                                        ]
-                                                                            ?.statusDetail
-                                                                            ?.length -
-                                                                            1
-                                                                    ]?.nama ===
-                                                                    'Berjalan'
-                                                                        ? 'bg-blue-500 text-white'
-                                                                        : 'bg-red-500 text-white'
-                                                                }`}
-                                                            >
-                                                                {
-                                                                    berkas
-                                                                        .status[
-                                                                        berkas
-                                                                            .status
-                                                                            .length -
-                                                                            1
-                                                                    ]
-                                                                        ?.statusDetail?.[
-                                                                        berkas
-                                                                            .status[
-                                                                            berkas
-                                                                                .status
-                                                                                .length -
-                                                                                1
-                                                                        ]
-                                                                            ?.statusDetail
-                                                                            ?.length -
-                                                                            1
-                                                                    ]?.nama
-                                                                }
-                                                            </span>
-                                                        ) : (
-                                                            'Unknown'
-                                                        )}
-                                                    </Typography>
-                                                </td>
-
-                                                <td
-                                                    className={`${className} sticky right-0 bg-gray-50 z-10 hide-on-mobile`}
-                                                >
-                                                    <div className="flex items-center gap-2">
-                                                        {renderActionButtons(
-                                                            berkas
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td
-                                                    className={`${className} sticky right-0 bg-gray-50 z-10`}
-                                                >
-                                                    <IconButton
-                                                        variant="text"
-                                                        color="blue"
-                                                        onClick={() => {
-                                                            setSelectedBerkas(
-                                                                berkas
-                                                            )
-                                                            setShowDetailPopUp(
-                                                                true
-                                                            )
-                                                        }}
-                                                    >
-                                                        <EyeIcon className="h-5 w-5" />
-                                                    </IconButton>
-                                                </td>
-                                            </tr>
-                                        )
+                                          <tr key={berkas._id}>
+                                            <td className={className}>
+                                              <Typography className="text-xs font-semibold text-blue-gray-600">
+                                                {berkas.noBerkas}/
+                                                {berkas.tahunBerkas}
+                                              </Typography>
+                                            </td>
+                                            <td className={className}>
+                                              <Typography className="text-xs font-semibold text-blue-gray-600">
+                                                {new Date(
+                                                  berkas.tanggalTerima
+                                                ).toLocaleDateString()}
+                                              </Typography>
+                                            </td>
+                                            <td className={className}>
+                                              <Typography className="text-xs font-semibold text-blue-gray-600">
+                                                {berkas.namaKegiatan}
+                                              </Typography>
+                                            </td>
+                                            <td className={className}>
+                                              <Typography className="text-xs font-semibold text-blue-gray-600">
+                                                {berkas.namaPemohon}
+                                              </Typography>
+                                            </td>
+                                            <td className={className}>
+                                              <Typography className="text-xs font-semibold text-blue-gray-600">
+                                                {berkas.namaDesa}
+                                              </Typography>
+                                            </td>
+                                            <td className={className}>
+                                              <Typography className="text-xs font-semibold text-blue-gray-600">
+                                                {berkas.status?.[
+                                                  berkas.status.length - 1
+                                                ]?.statusDetail?.[
+                                                  berkas.status[
+                                                    berkas.status.length - 1
+                                                  ]?.statusDetail?.length - 1
+                                                ]?.nama ? (
+                                                  <span
+                                                    className={`px-2 py-1 text-xs font-medium rounded ${
+                                                      berkas.status[
+                                                        berkas.status.length - 1
+                                                      ]?.statusDetail?.[
+                                                        berkas.status[
+                                                          berkas.status.length -
+                                                            1
+                                                        ]?.statusDetail
+                                                          ?.length - 1
+                                                      ]?.nama === 'Berjalan'
+                                                        ? 'bg-blue-500 text-white'
+                                                        : 'bg-red-500 text-white'
+                                                    }`}
+                                                  >
+                                                    {
+                                                      berkas.status[
+                                                        berkas.status.length - 1
+                                                      ]?.statusDetail?.[
+                                                        berkas.status[
+                                                          berkas.status.length -
+                                                            1
+                                                        ]?.statusDetail
+                                                          ?.length - 1
+                                                      ]?.nama
+                                                    }
+                                                  </span>
+                                                ) : (
+                                                  'Unknown'
+                                                )}
+                                              </Typography>
+                                            </td>
+                                            <td
+                                              className={`${className} sticky right-0 bg-gray-50 z-10 hide-on-mobile`}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                {renderActionButtons(berkas)}
+                                              </div>
+                                            </td>
+                                            <td
+                                              className={`${className} sticky right-0 bg-gray-50 z-10`}
+                                            >
+                                              <IconButton
+                                                variant="text"
+                                                color="blue"
+                                                onClick={() => {
+                                                  setSelectedBerkas(berkas);
+                                                  setShowDetailPopUp(true);
+                                                }}
+                                              >
+                                                <EyeIcon className="h-5 w-5" />
+                                              </IconButton>
+                                            </td>
+                                          </tr>
+                                        );
                                     })}
                                 </tbody>
                             </table>
