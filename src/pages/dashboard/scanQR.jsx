@@ -4,6 +4,7 @@ import GenerateQRCode from '@/components/GenerateQRCode';
 import ScanQRCode from '@/components/ScanQRCode';
 import { useMaterialTailwindController } from '@/context';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ScanQR = () => {
   const [controller] = useMaterialTailwindController();
@@ -12,6 +13,7 @@ const ScanQR = () => {
   const [showDetailPopUp, setShowDetailPopUp] = useState(false); // Menentukan apakah modal detail tampil
   const [showUpdatePopup, setShowUpdatePopup] = useState(false); // Mengatur popup update
   const token = 'YOUR_AUTH_TOKEN';
+  const navigate = useNavigate();
 
   const extractIdFromUrl = (url) => {
     if (!url) return null; // Jika URL kosong, kembalikan null
@@ -60,10 +62,13 @@ const ScanQR = () => {
     <div>
       <h1>Scan QR Code</h1>
       <ScanQRCode
-        onScan={(id) => fetchBerkas(extractIdFromUrl(id.text))} // Memanggil fetchBerkas dengan ID hasil scan
+        onScan={(id) => {
+          id.text.includes('tangkApp') && navigate(id.text);
+          // fetchBerkas(extractIdFromUrl(id.text))
+        }}
       />
       {/* <GenerateQRCode /> */}
-      {showDetailPopUp && (
+      {/* {showDetailPopUp && (
         <DetailModal
           setSelectedBerkas={setSelectedBerkas}
           setShowUpdatePopup={setShowUpdatePopup}
@@ -76,7 +81,7 @@ const ScanQR = () => {
             setShowDetailPopUp(false);
           }}
         />
-      )}
+      )} */}
     </div>
   );
 };
