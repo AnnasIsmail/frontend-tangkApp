@@ -60,9 +60,9 @@ const ScanQR = () => {
     <div>
       <h1>Scan QR Code</h1>
       <ScanQRCode
-        onScan={(id) => fetchBerkas( extractIdFromUrl(id.text))} // Memanggil fetchBerkas dengan ID hasil scan
+        onScan={(id) => fetchBerkas(extractIdFromUrl(id.text))} // Memanggil fetchBerkas dengan ID hasil scan
       />
-      <GenerateQRCode />
+      {/* <GenerateQRCode /> */}
       {showDetailPopUp && (
         <DetailModal
           setSelectedBerkas={setSelectedBerkas}
