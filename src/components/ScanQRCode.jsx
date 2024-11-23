@@ -9,9 +9,9 @@ const ScanQRCode = ({onScan}) => {
   // Fungsi untuk menangani hasil scan
   const handleScan = (data) => {
     if (data) {
-      onScan(data)
-      setResult(data.text); // Simpan hasil QR Code ke state
-      setScanning(false); // Hentikan kamera setelah scan berhasil
+      onScan(data);
+      // setResult(data.text); // Simpan hasil QR Code ke state
+      // setScanning(false); // Hentikan kamera setelah scan berhasil
     }
   };
 
