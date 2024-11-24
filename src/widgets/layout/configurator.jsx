@@ -47,26 +47,26 @@ export function Configurator() {
   const [stars, setStars] = React.useState(0);
 
   const sidenavColors = {
-    white: "from-gray-100 to-gray-100 border-gray-200",
-    dark: "from-black to-black border-gray-200",
-    green: "from-green-400 to-green-600",
-    orange: "from-orange-400 to-orange-600",
-    red: "from-red-400 to-red-600",
-    pink: "from-pink-400 to-pink-600",
+    white: 'from-gray-100 to-gray-100 border-gray-200',
+    dark: 'from-black to-black border-gray-200',
+    green: 'from-green-400 to-green-600',
+    orange: 'from-orange-400 to-orange-600',
+    red: 'from-red-400 to-red-600',
+    pink: 'from-pink-400 to-pink-600',
   };
 
-  React.useEffect(() => {
-    const stars = fetch(
-      "https://api.github.com/repos/creativetimofficial/material-tailwind-dashboard-react"
-    )
-      .then((response) => response.json())
-      .then((data) => setStars(formatNumber(data.stargazers_count, 1)));
-  }, []);
+  // React.useEffect(() => {
+  //   const stars = fetch(
+  //     "https://api.github.com/repos/creativetimofficial/material-tailwind-dashboard-react"
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => setStars(formatNumber(data.stargazers_count, 1)));
+  // }, []);
 
   return (
     <aside
       className={`fixed top-0 right-0 z-50 h-screen w-96 bg-white px-2.5 shadow-lg transition-transform duration-300 ${
-        openConfigurator ? "translate-x-0" : "translate-x-96"
+        openConfigurator ? 'translate-x-0' : 'translate-x-96'
       }`}
     >
       <div className="flex items-start justify-between px-6 pt-8 pb-6">
@@ -98,7 +98,7 @@ export function Configurator() {
                 className={`h-6 w-6 cursor-pointer rounded-full border bg-gradient-to-br transition-transform hover:scale-105 ${
                   sidenavColors[color]
                 } ${
-                  sidenavColor === color ? "border-black" : "border-transparent"
+                  sidenavColor === color ? 'border-black' : 'border-transparent'
                 }`}
                 onClick={() => setSidenavColor(dispatch, color)}
               />
@@ -114,20 +114,20 @@ export function Configurator() {
           </Typography>
           <div className="mt-3 flex items-center gap-2">
             <Button
-              variant={sidenavType === "dark" ? "gradient" : "outlined"}
-              onClick={() => setSidenavType(dispatch, "dark")}
+              variant={sidenavType === 'dark' ? 'gradient' : 'outlined'}
+              onClick={() => setSidenavType(dispatch, 'dark')}
             >
               Dark
             </Button>
             <Button
-              variant={sidenavType === "transparent" ? "gradient" : "outlined"}
-              onClick={() => setSidenavType(dispatch, "transparent")}
+              variant={sidenavType === 'transparent' ? 'gradient' : 'outlined'}
+              onClick={() => setSidenavType(dispatch, 'transparent')}
             >
               Transparent
             </Button>
             <Button
-              variant={sidenavType === "white" ? "gradient" : "outlined"}
-              onClick={() => setSidenavType(dispatch, "white")}
+              variant={sidenavType === 'white' ? 'gradient' : 'outlined'}
+              onClick={() => setSidenavType(dispatch, 'white')}
             >
               White
             </Button>
@@ -211,17 +211,11 @@ export function Configurator() {
             Thank you for sharing ❤️
           </Typography>
           <div className="mt-4 flex justify-center gap-2">
-            <Button
-              variant="gradient"
-              className="flex items-center gap-2"
-            >
+            <Button variant="gradient" className="flex items-center gap-2">
               <i className="fa-brands fa-twitter text-white" />
               Tweet
             </Button>
-            <Button
-              variant="gradient"
-              className="flex items-center gap-2"
-            >
+            <Button variant="gradient" className="flex items-center gap-2">
               <i className="fa-brands fa-facebook text-white" />
               Share
             </Button>

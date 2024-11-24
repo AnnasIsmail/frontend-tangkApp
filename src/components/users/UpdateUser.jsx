@@ -20,35 +20,42 @@ const PopUpUpdateUser = ({ data, onClose, onUpdateSuccess }) => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [roleOptions, setRoleOptions] = useState([]); // State untuk role options
   const [controller] = useMaterialTailwindController();
   const { token } = controller;
 
-  // Daftar role yang tersedia
-  const roleOptions = [
-    { value: "Admin", label: "Admin" },
-    { value: "PelaksanaEntri", label: "Pelaksana Entri" },
-    { value: "PelaksanaSPJ", label: "Pelaksana SPJ" },
-    { value: "PelaksanaInventaris", label: "Pelaksana Inventaris" },
-    { value: "PelaksanaKoordinator", label: "Pelaksana Koordinator" },
-    { value: "PelaksanaPemetaan", label: "Pelaksana Pemetaan" },
-    { value: "PelaksanaPencetakan", label: "Pelaksana Pencetakan" },
-    { value: "Korsub", label: "Korsub" },
-    { value: "Kasi", label: "Kasi" },
-  ];
-
-  // Konversi role array string ke format react-select [{ value, label }]
+  // Ambil daftar role dari API
   useEffect(() => {
-    const selectedRoles = data.role.map((role) =>
-      roleOptions.find((option) => option.value === role)
-    );
-    setFormData((prev) => ({ ...prev, role: selectedRoles }));
-  }, [data.role]);
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get('roles', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const options = response.data.map((role) => ({
+          value: role.nama, // Sesuaikan dengan struktur API
+          label: role.nama,
+        }));
+        setRoleOptions(options);
+
+        // Set nilai awal untuk role berdasarkan data user
+        const selectedRoles = data.role.map((role) =>
+          options.find((option) => option.value === role)
+        );
+        setFormData((prev) => ({ ...prev, role: selectedRoles }));
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+        alert('Gagal mengambil data role dari server.');
+      }
+    };
+
+    fetchRoles();
+  }, [data.role, token]);
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.NIK.trim()) newErrors.NIK = "NIK tidak boleh kosong";
-    if (!formData.nama.trim()) newErrors.nama = "Nama tidak boleh kosong";
-    if (formData.role.length === 0) newErrors.role = "Role tidak boleh kosong";
+    if (!formData.NIK.trim()) newErrors.NIK = 'NIK tidak boleh kosong';
+    if (!formData.nama.trim()) newErrors.nama = 'Nama tidak boleh kosong';
+    if (formData.role.length === 0) newErrors.role = 'Role tidak boleh kosong';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -71,7 +78,8 @@ const PopUpUpdateUser = ({ data, onClose, onUpdateSuccess }) => {
         onUpdateSuccess(response.data);
       }
     } catch (error) {
-      alert("Gagal memperbarui user.");
+      console.error('Error updating user:', error);
+      alert('Gagal memperbarui user.');
     } finally {
       setLoading(false);
     }

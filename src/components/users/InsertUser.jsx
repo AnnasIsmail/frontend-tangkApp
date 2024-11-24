@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogHeader,
@@ -6,45 +6,66 @@ import {
   DialogFooter,
   Input,
   Button,
-} from "@material-tailwind/react";
-import axios from "../../api/apiTangkApp";
-import { useMaterialTailwindController } from "@/context";
-import Select from "react-select"; // Import react-select
+} from '@material-tailwind/react';
+import axios from '../../api/apiTangkApp';
+import { useMaterialTailwindController } from '@/context';
+import Select from 'react-select'; // Import react-select
 
 const PopUpInsertUser = ({ onClose, onInsertSuccess }) => {
   const [formData, setFormData] = useState({
-    NIK: "",
-    nama: "",
-    password: "",
+    NIK: '',
+    nama: '',
+    password: '',
     role: [],
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [roles, setRoles] = useState([]); // State untuk menyimpan roles dari database
   const [controller] = useMaterialTailwindController();
   const { token } = controller;
 
+  useEffect(() => {
+    fetchRoles(); // Ambil roles ketika komponen di-mount
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await axios.get('/roles', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const roleOptions = response.data.map((role) => ({
+        value: role.nama,
+        label: role.nama,
+      }));
+      setRoles(roleOptions); // Simpan ke state roles
+    } catch (error) {
+      console.error('Gagal mengambil roles:', error);
+      alert('Gagal mengambil roles dari server.');
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.NIK.trim()) newErrors.NIK = "NIK tidak boleh kosong";
-    if (!formData.nama.trim()) newErrors.nama = "Nama tidak boleh kosong";
-    if (formData.role.length === 0) newErrors.role = "Role tidak boleh kosong";
+    if (!formData.NIK.trim()) newErrors.NIK = 'NIK tidak boleh kosong';
+    if (!formData.nama.trim()) newErrors.nama = 'Nama tidak boleh kosong';
+    if (formData.role.length === 0) newErrors.role = 'Role tidak boleh kosong';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleInsert = async () => {
     if (!validateForm()) return;
-  
+
     setLoading(true);
     try {
       // Konversi role menjadi array nilai string
-      formData.role = formData.role.map(item => item.value);
-  
+      formData.role = formData.role.map((item) => item.value);
+
       // Mengirim data ke API
-      const response = await axios.post("user/create", formData, {
+      const response = await axios.post('user/create', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       // Memastikan respons berhasil
       if (response.status === 201) {
         onInsertSuccess(response.data);
@@ -54,55 +75,48 @@ const PopUpInsertUser = ({ onClose, onInsertSuccess }) => {
     } catch (error) {
       // Penanganan error lebih jelas
       if (error.response) {
-        console.error("Error Response:", error.response.data);
-        alert(`Gagal menambahkan user: ${error.response.data.message || error.response.status}`);
+        console.error('Error Response:', error.response.data);
+        alert(
+          `Gagal menambahkan user: ${
+            error.response.data.message || error.response.status
+          }`
+        );
       } else {
-        console.error("Error Message:", error.message);
-        alert("Gagal menambahkan user. Terjadi masalah jaringan atau server.");
+        console.error('Error Message:', error.message);
+        alert('Gagal menambahkan user. Terjadi masalah jaringan atau server.');
       }
     } finally {
       setLoading(false);
     }
   };
-  
-
-  const roleOptions = [
-    { value: "Admin", label: "Admin" },
-    { value: "PelaksanaEntri", label: "Pelaksana Entri" },
-    { value: "PelaksanaSPJ", label: "Pelaksana SPJ" },
-    { value: "PelaksanaInventaris", label: "Pelaksana Inventaris" },
-    { value: "PelaksanaKoordinator", label: "Pelaksana Koordinator" },
-    { value: "PelaksanaPemetaan", label: "Pelaksana Pemetaan" },
-    { value: "PelaksanaPencetakan", label: "Pelaksana Pencetakan" },
-    { value: "Korsub", label: "Korsub" },
-    { value: "Kasi", label: "Kasi" },
-  ];
 
   return (
     <Dialog open={true} handler={onClose}>
       <DialogHeader>Tambah User</DialogHeader>
-      <DialogBody style={{ display: "grid", gap: "10px" }}>
+      <DialogBody style={{ display: 'grid', gap: '10px' }}>
         <Input
           label="NIK"
           value={formData.NIK}
           onChange={(e) => setFormData({ ...formData, NIK: e.target.value })}
           style={{
-            borderColor: errors.NIK ? "red" : undefined,
+            borderColor: errors.NIK ? 'red' : undefined,
           }}
         />
         {errors.NIK && (
-          <span style={{ color: "red", fontSize: "12px" }}>{errors.NIK}</span>
+          <span style={{ color: 'red', fontSize: '12px' }}>{errors.NIK}</span>
         )}
         <Input
           label="Nama"
           value={formData.nama}
-          onChange={(e) => setFormData({ ...formData, nama: e.target.value.toUpperCase() })}
+          onChange={(e) =>
+            setFormData({ ...formData, nama: e.target.value.toUpperCase() })
+          }
           style={{
-            borderColor: errors.nama ? "red" : undefined,
+            borderColor: errors.nama ? 'red' : undefined,
           }}
         />
         {errors.nama && (
-          <span style={{ color: "red", fontSize: "12px" }}>{errors.nama}</span>
+          <span style={{ color: 'red', fontSize: '12px' }}>{errors.nama}</span>
         )}
         <Input
           label="Password (Opsional)"
@@ -115,20 +129,16 @@ const PopUpInsertUser = ({ onClose, onInsertSuccess }) => {
         <Select
           isMulti
           name="role"
-          options={roleOptions}
+          options={roles} // Gunakan roles dari database
           value={formData.role}
-          onChange={(selected) => 
-          {
-            setFormData({ ...formData, role: selected })
-          }
-          }
+          onChange={(selected) => setFormData({ ...formData, role: selected })}
           getOptionLabel={(e) => e.label} // Customize label for options
           getOptionValue={(e) => e.value} // Customize value for options
           placeholder="Pilih Role"
           isSearchable
         />
         {errors.role && (
-          <span style={{ color: "red", fontSize: "12px" }}>{errors.role}</span>
+          <span style={{ color: 'red', fontSize: '12px' }}>{errors.role}</span>
         )}
       </DialogBody>
       <DialogFooter>
@@ -136,7 +146,7 @@ const PopUpInsertUser = ({ onClose, onInsertSuccess }) => {
           Batal
         </Button>
         <Button variant="gradient" onClick={handleInsert} disabled={loading}>
-          {loading ? "Loading..." : "Tambah"}
+          {loading ? 'Loading...' : 'Tambah'}
         </Button>
       </DialogFooter>
     </Dialog>
